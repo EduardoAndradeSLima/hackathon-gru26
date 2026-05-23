@@ -1,0 +1,233 @@
+{
+  "users": [
+    {
+      "id": "usr-admin",
+      "nome": "Administrador Geral",
+      "email": "admin@guarulhos.sp.gov.br",
+      "senha_temporaria": "Admin@123",
+      "perfil": "ADMINISTRADOR",
+      "unidade": "Secretaria de Desenvolvimento Social",
+      "created_at": "2026-01-05T12:00:00.000Z"
+    },
+    {
+      "id": "usr-central",
+      "nome": "Equipe Central de Vagas",
+      "email": "central@guarulhos.sp.gov.br",
+      "senha_temporaria": "Admin@123",
+      "perfil": "CENTRAL_VAGAS",
+      "unidade": "Central de Vagas",
+      "created_at": "2026-01-05T12:00:00.000Z"
+    },
+    {
+      "id": "usr-cras",
+      "nome": "CRAS Pimentas",
+      "email": "cras@guarulhos.sp.gov.br",
+      "senha_temporaria": "Admin@123",
+      "perfil": "CRAS",
+      "unidade": "CRAS Pimentas",
+      "created_at": "2026-01-05T12:00:00.000Z"
+    },
+    {
+      "id": "usr-creas",
+      "nome": "CREAS Centro",
+      "email": "creas@guarulhos.sp.gov.br",
+      "senha_temporaria": "Admin@123",
+      "perfil": "CREAS",
+      "unidade": "CREAS Centro",
+      "created_at": "2026-01-05T12:00:00.000Z"
+    },
+    {
+      "id": "usr-osc",
+      "nome": "Casa Social Parceira",
+      "email": "osc@parceira.org.br",
+      "senha_temporaria": "Admin@123",
+      "perfil": "OSC",
+      "unidade": "OSC Casa Social Esperanca",
+      "created_at": "2026-01-05T12:00:00.000Z"
+    }
+  ],
+  "oscs": [
+    {
+      "id": "osc-1",
+      "nome": "Casa Social Esperanca",
+      "cnpj": "12.345.678/0001-90",
+      "endereco": "Rua Itapegica, 120 - Centro",
+      "bairro": "Centro",
+      "regiao": "Centro",
+      "telefone": "(11) 2400-1000",
+      "responsavel": "Mariana Costa",
+      "tipo_servico": "Acolhimento adulto",
+      "created_at": "2026-01-10T12:00:00.000Z"
+    },
+    {
+      "id": "osc-2",
+      "nome": "Lar Protecao Idosa Guarulhos",
+      "cnpj": "23.456.789/0001-01",
+      "endereco": "Avenida Timoteo Penteado, 891 - Vila Galvao",
+      "bairro": "Vila Galvao",
+      "regiao": "Norte",
+      "telefone": "(11) 2450-2200",
+      "responsavel": "Carlos Almeida",
+      "tipo_servico": "ILPI",
+      "created_at": "2026-01-10T12:00:00.000Z"
+    },
+    {
+      "id": "osc-3",
+      "nome": "Instituto Nova Familia",
+      "cnpj": "34.567.890/0001-12",
+      "endereco": "Rua Jurema, 450 - Pimentas",
+      "bairro": "Pimentas",
+      "regiao": "Leste",
+      "telefone": "(11) 2480-3300",
+      "responsavel": "Aline Souza",
+      "tipo_servico": "Acolhimento infantil",
+      "created_at": "2026-01-10T12:00:00.000Z"
+    },
+    {
+      "id": "osc-4",
+      "nome": "Casa Mulher Segura",
+      "cnpj": "45.678.901/0001-23",
+      "endereco": "Endereco sigiloso",
+      "bairro": "Sigiloso",
+      "regiao": "Municipal",
+      "telefone": "(11) 2460-4400",
+      "responsavel": "Equipe Tecnica",
+      "tipo_servico": "Violencia domestica",
+      "created_at": "2026-01-10T12:00:00.000Z"
+    }
+  ],
+  "vagas": [
+    {
+      "id": "vaga-1",
+      "osc_id": "osc-1",
+      "tipo_servico": "Acolhimento adulto",
+      "perfil_aceito": ["adulto", "situacao_rua", "desemprego"],
+      "grau_dependencia": "baixo",
+      "status": "disponivel",
+      "observacoes": "Vaga masculina com acolhida imediata.",
+      "updated_at": "2026-05-20T08:00:00.000Z"
+    },
+    {
+      "id": "vaga-2",
+      "osc_id": "osc-2",
+      "tipo_servico": "ILPI",
+      "perfil_aceito": ["idoso", "deficiencia", "dependencia_grau_2"],
+      "grau_dependencia": "grau_2",
+      "status": "disponivel",
+      "observacoes": "Atende pessoa idosa com dependencia moderada.",
+      "updated_at": "2026-05-22T14:30:00.000Z"
+    },
+    {
+      "id": "vaga-3",
+      "osc_id": "osc-3",
+      "tipo_servico": "Acolhimento infantil",
+      "perfil_aceito": ["crianca", "adolescente", "abandono"],
+      "grau_dependencia": "nao_aplicavel",
+      "status": "reservada",
+      "observacoes": "Reserva tecnica aguardando decisao judicial.",
+      "updated_at": "2026-05-21T10:20:00.000Z"
+    },
+    {
+      "id": "vaga-4",
+      "osc_id": "osc-4",
+      "tipo_servico": "Violencia domestica",
+      "perfil_aceito": ["mulher", "violencia_domestica", "risco_social"],
+      "grau_dependencia": "nao_aplicavel",
+      "status": "disponivel",
+      "observacoes": "Encaminhamento prioritario com protecao de dados.",
+      "updated_at": "2026-05-23T09:15:00.000Z"
+    },
+    {
+      "id": "vaga-5",
+      "osc_id": "osc-1",
+      "tipo_servico": "Centro Dia",
+      "perfil_aceito": ["idoso", "deficiencia", "familia"],
+      "grau_dependencia": "grau_1",
+      "status": "bloqueada",
+      "observacoes": "Bloqueada para manutencao de equipe.",
+      "updated_at": "2026-05-22T16:00:00.000Z"
+    }
+  ],
+  "cidadaos": [
+    {
+      "id": "cid-1",
+      "nome": "Joao Silva",
+      "cpf": "123.456.789-00",
+      "nis": "12345678901",
+      "nascimento": "1951-09-14",
+      "telefone": "(11) 99999-1000",
+      "endereco": "Rua das Palmeiras, 70",
+      "bairro": "Vila Galvao",
+      "regiao": "Norte",
+      "perfil_social": "Pessoa idosa com renda baixa e dependencia moderada.",
+      "vulnerabilidade": ["pessoa_idosa", "deficiencia"],
+      "grau_risco": "medio",
+      "unidade_referencia": "CREAS Centro",
+      "historico": ["Atendimento inicial registrado em 2026-05-08."],
+      "anexos": [],
+      "created_at": "2026-05-08T09:00:00.000Z"
+    },
+    {
+      "id": "cid-2",
+      "nome": "Maria Oliveira",
+      "cpf": "987.654.321-00",
+      "nis": "98765432109",
+      "nascimento": "1988-03-18",
+      "telefone": "(11) 98888-1000",
+      "endereco": "Endereco protegido",
+      "bairro": "Sigiloso",
+      "regiao": "Municipal",
+      "perfil_social": "Mulher em situacao de risco por violencia domestica.",
+      "vulnerabilidade": ["violencia_domestica", "risco_social"],
+      "grau_risco": "alto",
+      "unidade_referencia": "CREAS Centro",
+      "historico": ["Encaminhamento de urgencia em avaliacao."],
+      "anexos": [],
+      "created_at": "2026-05-18T11:40:00.000Z"
+    }
+  ],
+  "solicitacoes": [
+    {
+      "id": "sol-1",
+      "cidadao_id": "cid-1",
+      "tipo_servico": "ILPI",
+      "prioridade": "media",
+      "status": "pendente",
+      "data_solicitacao": "2026-05-09T13:00:00.000Z",
+      "data_encaminhamento": null,
+      "tempo_espera_dias": 14
+    },
+    {
+      "id": "sol-2",
+      "cidadao_id": "cid-2",
+      "tipo_servico": "Violencia domestica",
+      "prioridade": "critica",
+      "status": "em_analise",
+      "data_solicitacao": "2026-05-18T13:40:00.000Z",
+      "data_encaminhamento": null,
+      "tempo_espera_dias": 5
+    }
+  ],
+  "encaminhamentos": [
+    {
+      "id": "enc-1",
+      "solicitacao_id": "sol-2",
+      "vaga_id": "vaga-4",
+      "status": "aguardando_osc",
+      "justificativa": "Prioridade sugerida por risco elevado e vaga compativel.",
+      "created_at": "2026-05-22T15:20:00.000Z"
+    }
+  ],
+  "triagens": [],
+  "notificacoes": [
+    {
+      "id": "not-1",
+      "tipo": "alerta",
+      "titulo": "Risco elevado",
+      "mensagem": "Existe uma solicitacao critica aguardando resposta da OSC.",
+      "lida": false,
+      "created_at": "2026-05-23T09:30:00.000Z"
+    }
+  ],
+  "logs": []
+}
