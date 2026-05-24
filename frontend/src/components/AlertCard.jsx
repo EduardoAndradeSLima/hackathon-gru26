@@ -4,7 +4,7 @@ export default function AlertCard({ title, message, tone = 'blue' }) {
   const isDanger = tone === 'red' || tone === 'critico' || tone === 'alto';
   const classes = isDanger
     ? 'border-red-200 bg-red-50 text-red-800'
-    : tone === 'yellow'
+    : tone === 'yellow' || tone === 'atencao'
       ? 'border-amber-200 bg-amber-50 text-amber-800'
       : tone === 'green'
         ? 'border-emerald-200 bg-emerald-50 text-emerald-800'

@@ -7,6 +7,37 @@ export const regioes = [
   'Municipal'
 ].map((value) => ({ value, label: value }));
 
+export const bairros = [
+  ['Centro', 'Centro'],
+  ['Macedo', 'Centro'],
+  ['Gopouva', 'Centro'],
+  ['Itapegica', 'Centro'],
+  ['Vila Augusta', 'Centro'],
+  ['Ponte Grande', 'Centro'],
+  ['Maia', 'Centro'],
+  ['Vila Galvao', 'Norte'],
+  ['Vila Rosalia', 'Norte'],
+  ['Cabucu', 'Norte'],
+  ['Taboao', 'Norte'],
+  ['Parque Cecap', 'Norte'],
+  ['Sao Joao', 'Leste'],
+  ['Pimentas', 'Leste'],
+  ['Cumbica', 'Leste'],
+  ['Jardim Cumbica', 'Leste'],
+  ['Bonsucesso', 'Leste'],
+  ['Agua Chata', 'Leste'],
+  ['Presidente Dutra', 'Leste'],
+  ['Cidade Soberana', 'Leste'],
+  ['Cocaia', 'Sul'],
+  ['Lavras', 'Sul'],
+  ['Recreio Sao Jorge', 'Sul'],
+  ['Outro', 'Municipal']
+].map(([value, regiao]) => ({ value, label: value, regiao }));
+
+export function getRegionByBairro(bairro) {
+  return bairros.find((item) => item.value === bairro)?.regiao || 'Municipal';
+}
+
 export const tiposServico = [
   'Acolhimento adulto',
   'ILPI',

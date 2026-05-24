@@ -77,7 +77,12 @@ export default function DashboardAdmin() {
 
         <div className="space-y-3">
           {dashboard.alertas_criticos.map((alerta) => (
-            <AlertCard key={alerta.id} title={alerta.tipo_servico} message={alerta.mensagem} tone={alerta.prioridade} />
+            <AlertCard
+              key={alerta.id}
+              title={alerta.cidadao_nome ? `${alerta.tipo_servico} - ${alerta.cidadao_nome}` : alerta.tipo_servico}
+              message={alerta.mensagem}
+              tone={alerta.prioridade}
+            />
           ))}
           {!dashboard.alertas_criticos.length && (
             <AlertCard title="Sem alertas críticos" message="Não há solicitações com risco crítico ou espera acima do parâmetro." />

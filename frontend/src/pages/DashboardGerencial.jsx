@@ -41,7 +41,7 @@ export default function DashboardGerencial() {
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <DashboardCard title="Cidadãos acompanhados" value={dashboard.cards.cidadaos_acompanhados} icon={Users} />
         <DashboardCard title="OSCs ativas" value={dashboard.cards.oscs_ativas} icon={Building2} tone="green" />
-        <DashboardCard title="Solicitações pendentes" value={dashboard.cards.solicitacoes_pendentes} icon={ClipboardCheck} tone="yellow" />
+        <DashboardCard title="Triagens ILPI" value={dashboard.cards.triagens_ilpi || 0} icon={ClipboardCheck} tone="yellow" />
         <DashboardCard title="Tempo médio" value={`${dashboard.cards.tempo_medio_espera} dias`} icon={Timer} tone="red" />
       </section>
 
@@ -51,6 +51,12 @@ export default function DashboardGerencial() {
         </ChartPanel>
         <ChartPanel title="Prioridade da fila">
           <SimplePieChart data={dashboard.charts.prioridades} nameKey="prioridade" dataKey="total" />
+        </ChartPanel>
+        <ChartPanel title="Triagem ILPI por grau">
+          <SimpleBarChart data={dashboard.charts.triagens_por_grau || []} xKey="grau" dataKey="total" />
+        </ChartPanel>
+        <ChartPanel title="Indice de vulnerabilidade ILPI">
+          <SimplePieChart data={dashboard.charts.triagens_por_risco || []} nameKey="risco" dataKey="total" />
         </ChartPanel>
       </section>
 

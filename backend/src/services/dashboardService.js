@@ -13,12 +13,13 @@ function asChartData(grouped, nameKey = 'name', valueKey = 'value') {
 }
 
 async function getDashboard() {
-  const [vagas, solicitacoes, oscs, cidadaos, encaminhamentos] = await Promise.all([
+  const [vagas, solicitacoes, oscs, cidadaos, encaminhamentos, triagens] = await Promise.all([
     store.list('vagas'),
     store.list('solicitacoes'),
     store.list('oscs'),
     store.list('cidadaos'),
-    store.list('encaminhamentos')
+    store.list('encaminhamentos'),
+    store.list('triagens')
   ]);
 
   const disponiveis = vagas.filter((vaga) => vaga.status === 'disponivel').length;
@@ -31,6 +32,13 @@ async function getDashboard() {
   const ocupacaoPorStatus = asChartData(groupCount(vagas, 'status'), 'status', 'total');
   const demandaPorRegiao = asChartData(groupCount(cidadaos, 'regiao'), 'regiao', 'total');
   const prioridades = asChartData(groupCount(solicitacoes, 'prioridade'), 'prioridade', 'total');
+  const triagensIlpi = triagens.filter((item) => item.dados?.tipo_necessidade === 'ILPI');
+  const triagensPorGrau = asChartData(groupCount(triagensIlpi.map((item) => ({
+    grau: item.classificacao?.grau_dependencia || 'nao informado'
+  })), 'grau'), 'grau', 'total');
+  const triagensPorRisco = asChartData(groupCount(triagensIlpi.map((item) => ({
+    risco: item.classificacao?.grau_risco || 'nao informado'
+  })), 'risco'), 'risco', 'total');
 
   const gargalos = filaPorServico
     .map((servico) => ({
@@ -47,16 +55,32 @@ async function getDashboard() {
   }).sort((a, b) => b.encaminhamentos - a.encaminhamentos);
 
   const alertasCriticos = solicitacoes
-    .filter((item) => item.prioridade === 'critica' || Number(item.tempo_espera_dias || 0) >= 30)
-    .map((item) => ({
-      id: item.id,
-      tipo_servico: item.tipo_servico,
-      prioridade: item.prioridade,
-      tempo_espera_dias: item.tempo_espera_dias,
-      mensagem: item.prioridade === 'critica'
-        ? 'Solicitacao critica aguardando decisao.'
-        : 'Tempo de espera acima do parametro recomendado.'
-    }));
+    .filter((item) =>
+      item.prioridade === 'critica'
+      || Number(item.tempo_espera_dias || 0) >= 30
+      || (item.tipo_servico === 'ILPI' && ['pendente', 'em_analise', 'encaminhada'].includes(item.status))
+    )
+    .map((item) => {
+      const cidadao = cidadaos.find((current) => current.id === item.cidadao_id);
+      const region = cidadao?.regiao || 'regiao nao informada';
+      const dependency = Array.isArray(cidadao?.vulnerabilidade)
+        ? cidadao.vulnerabilidade.find((value) => ['grau_1', 'grau_2', 'grau_3'].includes(value))
+        : null;
+
+      return {
+        id: item.id,
+        tipo_servico: item.tipo_servico,
+        prioridade: item.prioridade,
+        tempo_espera_dias: item.tempo_espera_dias,
+        regiao: region,
+        cidadao_nome: cidadao?.nome,
+        mensagem: item.tipo_servico === 'ILPI'
+          ? `Idoso em ${region} deve ser avaliado. ${dependency ? `Grau sugerido: ${dependency}. ` : ''}Status: ${item.status}.`
+          : item.prioridade === 'critica'
+            ? 'Solicitacao critica aguardando decisao.'
+            : 'Tempo de espera acima do parametro recomendado.'
+      };
+    });
 
   return {
     cards: {
@@ -65,13 +89,16 @@ async function getDashboard() {
       tempo_medio_espera: tempoMedio,
       solicitacoes_pendentes: pendentes,
       oscs_ativas: oscs.length,
-      cidadaos_acompanhados: cidadaos.length
+      cidadaos_acompanhados: cidadaos.length,
+      triagens_ilpi: triagensIlpi.length
     },
     charts: {
       fila_por_servico: filaPorServico,
       ocupacao_por_status: ocupacaoPorStatus,
       demanda_por_regiao: demandaPorRegiao,
-      prioridades
+      prioridades,
+      triagens_por_grau: triagensPorGrau,
+      triagens_por_risco: triagensPorRisco
     },
     gargalos,
     alertas_criticos: alertasCriticos,

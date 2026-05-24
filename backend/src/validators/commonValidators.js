@@ -70,11 +70,21 @@ const encaminhamentoValidator = [
 
 const triageValidator = [
   body('nome').notEmpty().withMessage('Nome obrigatorio.'),
-  body('idade').isInt({ min: 0, max: 130 }).withMessage('Idade invalida.'),
+  body('idade').isInt({ min: 60, max: 130 }).withMessage('Idade invalida para triagem ILPI.'),
   body('bairro').notEmpty().withMessage('Bairro obrigatorio.'),
-  body('regiao').notEmpty().withMessage('Regiao obrigatoria.'),
-  body('urgencia').isIn(['baixa', 'media', 'alta', 'critica']).withMessage('Urgencia invalida.'),
-  body('tipo_necessidade').notEmpty().withMessage('Tipo de necessidade obrigatorio.')
+  body('regiao').optional({ checkFalsy: true }).isString().withMessage('Regiao invalida.'),
+  body('tipo_necessidade').equals('ILPI').withMessage('A triagem publica atual aceita apenas casos de ILPI.'),
+  body('grau_mobilidade').isIn(['independente', 'apoio', 'cadeira_rodas', 'acamado']).withMessage('Grau de mobilidade obrigatorio.'),
+  body('alimentacao').isIn(['independente', 'assistida']).withMessage('Alimentacao obrigatoria.'),
+  body('higiene_pessoal').isIn(['independente', 'assistida', 'dependente']).withMessage('Higiene pessoal obrigatoria.'),
+  body('cognicao').isIn(['preservada', 'confusao_leve', 'comprometida']).withMessage('Cognicao obrigatoria.'),
+  body('uso_medicamentos').isIn(['autonomo', 'supervisionado', 'administrado']).withMessage('Uso de medicamentos obrigatorio.'),
+  body('presenca_cuidador').isIn(['sim', 'parcial', 'nao']).withMessage('Presenca de cuidador obrigatoria.'),
+  body('risco_abandono').isIn(['baixo', 'medio', 'alto', 'critico']).withMessage('Risco de abandono obrigatorio.'),
+  body('situacao_moradia').isIn(['propria_alugada', 'com_familia', 'provisoria', 'rua', 'institucional']).withMessage('Situacao de moradia obrigatoria.'),
+  body('renda_aproximada').isFloat({ min: 0 }).withMessage('Renda obrigatoria.'),
+  body('saude').isIn(['estavel', 'acompanhamento', 'fragil', 'grave']).withMessage('Condicao de saude obrigatoria.'),
+  body('tempo_espera_dias').optional({ checkFalsy: true }).isInt({ min: 0, max: 3650 }).withMessage('Tempo de espera invalido.')
 ];
 
 module.exports = {

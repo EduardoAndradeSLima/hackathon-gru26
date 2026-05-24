@@ -16,6 +16,12 @@ function scoreVaga(vaga, osc, cidadao, solicitacao) {
 
   const vulnerabilidades = Array.isArray(cidadao?.vulnerabilidade) ? cidadao.vulnerabilidade : [];
   const perfilAceito = Array.isArray(vaga.perfil_aceito) ? vaga.perfil_aceito : [];
+  const grauIlpi = vulnerabilidades.find((item) => ['grau_1', 'grau_2', 'grau_3'].includes(item));
+
+  if (solicitacao.tipo_servico === 'ILPI' && vaga.grau_dependencia && vaga.grau_dependencia !== grauIlpi) {
+    return -1;
+  }
+
   const matches = vulnerabilidades.filter((item) => perfilAceito.includes(item));
   score += Math.min(matches.length * 5, 10);
 
@@ -50,6 +56,7 @@ const encaminhar = asyncHandler(async (req, res) => {
       const osc = oscs.find((item) => item.id === vaga.osc_id);
       return { vaga, osc, score: scoreVaga(vaga, osc, cidadao, solicitacao) };
     })
+    .filter((item) => item.score >= 0)
     .sort((a, b) => b.score - a.score);
 
   if (!candidatas.length) {
@@ -74,7 +81,6 @@ const encaminhar = asyncHandler(async (req, res) => {
     vaga_id: escolhida.vaga.id,
     status: 'aguardando_osc',
     justificativa,
-    score_aderencia: escolhida.score,
     created_at: now
   });
 

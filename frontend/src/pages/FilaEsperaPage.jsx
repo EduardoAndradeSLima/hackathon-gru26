@@ -19,6 +19,24 @@ const emptyForm = {
   tempo_espera_dias: 0
 };
 
+const priorityWeight = {
+  critica: 4,
+  alta: 3,
+  media: 2,
+  baixa: 1
+};
+
+function getDynamicPriority(row) {
+  const wait = Number(row.tempo_espera_dias || 0);
+  const current = row.prioridade || 'baixa';
+
+  if (wait >= 60) return 'critica';
+  if (wait >= 30 && priorityWeight[current] < priorityWeight.alta) return 'alta';
+  if (wait >= 15 && priorityWeight[current] < priorityWeight.media) return 'media';
+
+  return current;
+}
+
 export default function FilaEsperaPage() {
   const solicitacoes = useResource('/solicitacoes');
   const [cidadaos, setCidadaos] = useState([]);
@@ -67,6 +85,11 @@ export default function FilaEsperaPage() {
   const citizenOptions = cidadaos.map((cidadao) => ({ value: cidadao.id, label: cidadao.nome }));
   const citizenById = Object.fromEntries(cidadaos.map((cidadao) => [cidadao.id, cidadao.nome]));
   const citizenStatusById = Object.fromEntries(cidadaos.map((cidadao) => [cidadao.id, cidadao.status_atendimento || 'aguardando_triagem']));
+  const dynamicQueue = [...solicitacoes.items].sort((a, b) => {
+    const priorityDiff = priorityWeight[getDynamicPriority(b)] - priorityWeight[getDynamicPriority(a)];
+    if (priorityDiff !== 0) return priorityDiff;
+    return Number(b.tempo_espera_dias || 0) - Number(a.tempo_espera_dias || 0);
+  });
 
   return (
     <div className="space-y-4">
@@ -86,12 +109,12 @@ export default function FilaEsperaPage() {
       )} />
 
       <DataTable
-        data={solicitacoes.items}
+        data={dynamicQueue}
         loading={solicitacoes.loading}
         columns={[
           { key: 'cidadao_id', label: 'Cidadao', render: (row) => citizenById[row.cidadao_id] || row.cidadao_id },
           { key: 'tipo_servico', label: 'Servico' },
-          { key: 'prioridade', label: 'Prioridade', render: (row) => <StatusBadge value={row.prioridade} /> },
+          { key: 'prioridade', label: 'Prioridade dinamica', render: (row) => <StatusBadge value={getDynamicPriority(row)} /> },
           { key: 'status', label: 'Solicitacao', render: (row) => <StatusBadge value={row.status} /> },
           { key: 'status_cidadao', label: 'Cidadao', render: (row) => <StatusBadge value={citizenStatusById[row.cidadao_id]} /> },
           { key: 'tempo_espera_dias', label: 'Espera', render: (row) => `${row.tempo_espera_dias || 0} dias` },
