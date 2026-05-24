@@ -15,8 +15,7 @@ const emptyForm = {
   prioridade: 'media',
   status: 'pendente',
   data_solicitacao: new Date().toISOString(),
-  data_encaminhamento: null,
-  tempo_espera_dias: 0
+  data_encaminhamento: null
 };
 
 const priorityWeight = {
@@ -26,8 +25,18 @@ const priorityWeight = {
   baixa: 1
 };
 
+function getWaitDays(row) {
+  if (!row.data_solicitacao) return Number(row.tempo_espera_dias || 0);
+
+  const requestedAt = new Date(row.data_solicitacao).getTime();
+  if (Number.isNaN(requestedAt)) return Number(row.tempo_espera_dias || 0);
+
+  const diff = Date.now() - requestedAt;
+  return Math.max(Math.floor(diff / 86400000), Number(row.tempo_espera_dias || 0));
+}
+
 function getDynamicPriority(row) {
-  const wait = Number(row.tempo_espera_dias || 0);
+  const wait = getWaitDays(row);
   const current = row.prioridade || 'baixa';
 
   if (wait >= 60) return 'critica';
@@ -62,7 +71,8 @@ export default function FilaEsperaPage() {
     event.preventDefault();
     await solicitacoes.create({
       ...form,
-      tempo_espera_dias: Number(form.tempo_espera_dias || 0)
+      data_solicitacao: new Date().toISOString(),
+      tempo_espera_dias: 0
     });
     setOpen(false);
     setForm(emptyForm);
@@ -88,7 +98,7 @@ export default function FilaEsperaPage() {
   const dynamicQueue = [...solicitacoes.items].sort((a, b) => {
     const priorityDiff = priorityWeight[getDynamicPriority(b)] - priorityWeight[getDynamicPriority(a)];
     if (priorityDiff !== 0) return priorityDiff;
-    return Number(b.tempo_espera_dias || 0) - Number(a.tempo_espera_dias || 0);
+    return getWaitDays(b) - getWaitDays(a);
   });
 
   return (
@@ -117,7 +127,7 @@ export default function FilaEsperaPage() {
           { key: 'prioridade', label: 'Prioridade dinamica', render: (row) => <StatusBadge value={getDynamicPriority(row)} /> },
           { key: 'status', label: 'Solicitacao', render: (row) => <StatusBadge value={row.status} /> },
           { key: 'status_cidadao', label: 'Cidadao', render: (row) => <StatusBadge value={citizenStatusById[row.cidadao_id]} /> },
-          { key: 'tempo_espera_dias', label: 'Espera', render: (row) => `${row.tempo_espera_dias || 0} dias` },
+          { key: 'tempo_espera_dias', label: 'Espera', render: (row) => `${getWaitDays(row)} dias` },
           { key: 'data_solicitacao', label: 'Solicitada em', render: (row) => new Date(row.data_solicitacao).toLocaleDateString('pt-BR') }
         ]}
         actions={(row) => (
@@ -140,7 +150,6 @@ export default function FilaEsperaPage() {
           <FormInput label="Tipo de servico" name="tipo_servico" value={form.tipo_servico} onChange={handleChange} as="select" options={tiposServico} required />
           <FormInput label="Prioridade" name="prioridade" value={form.prioridade} onChange={handleChange} as="select" options={urgencias} required />
           <FormInput label="Status" name="status" value={form.status} onChange={handleChange} as="select" options={statusSolicitacao} required />
-          <FormInput label="Tempo de espera em dias" name="tempo_espera_dias" type="number" value={form.tempo_espera_dias} onChange={handleChange} />
           <div className="md:col-span-2">
             <button className="btn-primary" type="submit">Salvar solicitacao</button>
           </div>

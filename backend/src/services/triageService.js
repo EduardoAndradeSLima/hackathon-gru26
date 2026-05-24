@@ -79,8 +79,7 @@ function buildSocialProfile(form) {
       `Risco de abandono: ${c(form.risco_abandono)}`,
       `Moradia: ${c(form.situacao_moradia)}`,
       `Saude: ${c(form.saude)}`,
-      form.renda_aproximada ? `Renda: R$ ${form.renda_aproximada}` : '',
-      form.tempo_espera_dias ? `Tempo de espera: ${form.tempo_espera_dias} dias` : 'Tempo de espera: 0 dias'
+      form.renda_aproximada ? `Renda: R$ ${form.renda_aproximada}` : ''
     ].filter(Boolean).join('; ');
   }
 
@@ -158,8 +157,8 @@ async function createRequest(form, cidadao, resultado) {
   const service = text(form.tipo_necessidade) || 'ILPI'
     || resultado.servicos_compativeis?.[0]?.servico
     || 'Acompanhamento socioassistencial';
-  const waitingDays = Math.max(Number(form.tempo_espera_dias || 0), 0);
-  const requestedAt = new Date(Date.now() - waitingDays * 24 * 60 * 60 * 1000).toISOString();
+  const waitingDays = 0;
+  const requestedAt = new Date().toISOString();
 
   return store.create('solicitacoes', {
     cidadao_id: cidadao.id,

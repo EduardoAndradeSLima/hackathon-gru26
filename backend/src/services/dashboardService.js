@@ -12,6 +12,20 @@ function asChartData(grouped, nameKey = 'name', valueKey = 'value') {
   return Object.entries(grouped).map(([name, value]) => ({ [nameKey]: name, [valueKey]: value }));
 }
 
+function getWaitDays(item) {
+  if (!item.data_solicitacao) {
+    return Number(item.tempo_espera_dias || 0);
+  }
+
+  const requestedAt = new Date(item.data_solicitacao).getTime();
+  if (Number.isNaN(requestedAt)) {
+    return Number(item.tempo_espera_dias || 0);
+  }
+
+  const diff = Date.now() - requestedAt;
+  return Math.max(Math.floor(diff / 86400000), Number(item.tempo_espera_dias || 0));
+}
+
 async function getDashboard() {
   const [vagas, solicitacoes, oscs, cidadaos, encaminhamentos, triagens] = await Promise.all([
     store.list('vagas'),
@@ -25,7 +39,7 @@ async function getDashboard() {
   const disponiveis = vagas.filter((vaga) => vaga.status === 'disponivel').length;
   const ocupadas = vagas.filter((vaga) => vaga.status === 'ocupada').length;
   const pendentes = solicitacoes.filter((item) => ['pendente', 'em_analise'].includes(item.status)).length;
-  const tempos = solicitacoes.map((item) => Number(item.tempo_espera_dias || 0));
+  const tempos = solicitacoes.map(getWaitDays);
   const tempoMedio = tempos.length ? Math.round(tempos.reduce((a, b) => a + b, 0) / tempos.length) : 0;
 
   const filaPorServico = asChartData(groupCount(solicitacoes, 'tipo_servico'), 'servico', 'total');
@@ -57,7 +71,7 @@ async function getDashboard() {
   const alertasCriticos = solicitacoes
     .filter((item) =>
       item.prioridade === 'critica'
-      || Number(item.tempo_espera_dias || 0) >= 30
+      || getWaitDays(item) >= 30
       || (item.tipo_servico === 'ILPI' && ['pendente', 'em_analise', 'encaminhada'].includes(item.status))
     )
     .map((item) => {
@@ -71,7 +85,7 @@ async function getDashboard() {
         id: item.id,
         tipo_servico: item.tipo_servico,
         prioridade: item.prioridade,
-        tempo_espera_dias: item.tempo_espera_dias,
+        tempo_espera_dias: getWaitDays(item),
         regiao: region,
         cidadao_nome: cidadao?.nome,
         mensagem: item.tipo_servico === 'ILPI'

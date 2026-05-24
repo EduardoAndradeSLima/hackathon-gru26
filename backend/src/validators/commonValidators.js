@@ -83,8 +83,7 @@ const triageValidator = [
   body('risco_abandono').isIn(['baixo', 'medio', 'alto', 'critico']).withMessage('Risco de abandono obrigatorio.'),
   body('situacao_moradia').isIn(['propria_alugada', 'com_familia', 'provisoria', 'rua', 'institucional']).withMessage('Situacao de moradia obrigatoria.'),
   body('renda_aproximada').isFloat({ min: 0 }).withMessage('Renda obrigatoria.'),
-  body('saude').isIn(['estavel', 'acompanhamento', 'fragil', 'grave']).withMessage('Condicao de saude obrigatoria.'),
-  body('tempo_espera_dias').optional({ checkFalsy: true }).isInt({ min: 0, max: 3650 }).withMessage('Tempo de espera invalido.')
+  body('saude').isIn(['estavel', 'acompanhamento', 'fragil', 'grave']).withMessage('Condicao de saude obrigatoria.')
 ];
 
 module.exports = {

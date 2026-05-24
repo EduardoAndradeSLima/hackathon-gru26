@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ClipboardCheck, UserPlus } from 'lucide-react';
 import AlertCard from '../components/AlertCard.jsx';
 import FormInput from '../components/FormInput.jsx';
+import StatusBadge from '../components/StatusBadge.jsx';
 import { api } from '../services/api.js';
 import { bairros, getRegionByBairro } from '../services/options.js';
 
@@ -25,8 +26,7 @@ const initialForm = {
   risco_abandono: '',
   situacao_moradia: '',
   renda_aproximada: '',
-  saude: '',
-  tempo_espera_dias: 0
+  saude: ''
 };
 
 const mobilityOptions = [
@@ -148,8 +148,7 @@ export default function CitizenTriage() {
         tipo_necessidade: 'ILPI',
         regiao: getRegionByBairro(form.bairro),
         idade: Number(form.idade),
-        renda_aproximada: Number(form.renda_aproximada),
-        tempo_espera_dias: Number(form.tempo_espera_dias || 0)
+        renda_aproximada: Number(form.renda_aproximada)
       });
       setResult(data.resultado);
       setCreated({
@@ -221,7 +220,6 @@ export default function CitizenTriage() {
                 <FormInput label="Situacao de moradia" name="situacao_moradia" value={form.situacao_moradia} onChange={handleChange} as="select" options={housingOptions} required />
                 <FormInput label="Renda aproximada" name="renda_aproximada" type="number" value={form.renda_aproximada} onChange={handleChange} required />
                 <FormInput label="Condicao de saude" name="saude" value={form.saude} onChange={handleChange} as="select" options={healthOptions} required />
-                <FormInput label="Tempo de espera em dias" name="tempo_espera_dias" type="number" value={form.tempo_espera_dias} onChange={handleChange} />
               </div>
             </section>
 
