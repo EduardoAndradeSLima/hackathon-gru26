@@ -11,7 +11,7 @@ const highlights = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-civic-ink">
-      <header className="border-b border-civic-line bg-white">
+      <header className="border-b border-guarulhos-600 bg-guarulhos-500">
         <div className="page-shell flex min-h-16 items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3">
             <BrandLogo compact />
@@ -21,7 +21,7 @@ export default function LandingPage() {
               <Search size={18} aria-hidden="true" />
               Buscar atendimento
             </Link>
-            <Link className="btn-primary" to="/login">
+            <Link className="btn bg-guarulhos-900 text-white hover:bg-guarulhos-700" to="/login">
               Área da gestão
               <ArrowRight size={18} aria-hidden="true" />
             </Link>

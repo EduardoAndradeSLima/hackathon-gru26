@@ -13,6 +13,7 @@ const {
   oscValidator,
   vagaValidator,
   cidadaoValidator,
+  cidadaoPartialValidator,
   solicitacaoValidator,
   encaminhamentoValidator
 } = require('../validators/commonValidators');
@@ -45,6 +46,7 @@ const cidadaos = resource('cidadaos', cidadaoValidator, [...CRAS_PROFILES, ...CR
 const solicitacoes = resource('solicitacoes', solicitacaoValidator, [...CRAS_PROFILES, ...CREAS_PROFILES]);
 const encaminhamentos = resource('encaminhamentos', encaminhamentoValidator, CENTRAL_PROFILES);
 
+cidadaos.patch('/:id', auth, authorize(...CRAS_PROFILES, ...CREAS_PROFILES), idParam, cidadaoPartialValidator, validate, cidadaoController.update);
 cidadaos.post('/:id/documentos', auth, authorize(...CRAS_PROFILES, ...CREAS_PROFILES), upload.single('documento'), cidadaoController.uploadDocument);
 solicitacoes.patch('/:id/encaminhar', auth, authorize(...CENTRAL_PROFILES), solicitacaoController.encaminhar);
 encaminhamentos.patch('/:id/responder', auth, authorize(...CENTRAL_PROFILES, PROFILES.OSC), encaminhamentoController.responder);

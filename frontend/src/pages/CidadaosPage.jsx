@@ -52,6 +52,8 @@ export default function CidadaosPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
 
   function handleChange(event) {
     setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -60,6 +62,7 @@ export default function CidadaosPage() {
   function openCreate() {
     setEditing(null);
     setForm(emptyForm);
+    setFormError('');
     setOpen(true);
   }
 
@@ -73,6 +76,7 @@ export default function CidadaosPage() {
       status_atendimento: row.status_atendimento || 'aguardando_triagem',
       vulnerabilidade: Array.isArray(row.vulnerabilidade) ? row.vulnerabilidade.join(', ') : row.vulnerabilidade || ''
     });
+    setFormError('');
     setOpen(true);
   }
 
@@ -80,17 +84,31 @@ export default function CidadaosPage() {
     event.preventDefault();
     const payload = buildPayload(form);
 
-    if (editing) {
-      await cidadaos.update(editing.id, payload);
-    } else {
-      await cidadaos.create(payload);
-    }
+    setSaving(true);
+    setFormError('');
+    try {
+      if (editing) {
+        await api.patch(`/cidadaos/${editing.id}`, payload);
+        await cidadaos.load();
+      } else {
+        await cidadaos.create(payload);
+      }
 
-    setOpen(false);
+      setOpen(false);
+    } catch (err) {
+      setFormError(err.response?.data?.message || 'Nao foi possivel salvar o cadastro.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function updateStatus(row, status) {
-    await cidadaos.update(row.id, buildPayload({ ...row, status_atendimento: status }));
+    try {
+      await api.patch(`/cidadaos/${row.id}`, { status_atendimento: status });
+      await cidadaos.load();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Nao foi possivel alterar o status.');
+    }
   }
 
   async function uploadDocument(row, file) {
@@ -158,6 +176,11 @@ export default function CidadaosPage() {
 
       <Modal open={open} title={editing ? 'Editar cidadao' : 'Novo cidadao'} onClose={() => setOpen(false)}>
         <form className="grid gap-4 md:grid-cols-2" onSubmit={submit}>
+          {formError && (
+            <p className="rounded-card border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700 md:col-span-2">
+              {formError}
+            </p>
+          )}
           <FormInput label="Nome" name="nome" value={form.nome} onChange={handleChange} required />
           <FormInput label="CPF" name="cpf" value={form.cpf} onChange={handleChange} required />
           <FormInput label="NIS" name="nis" value={form.nis} onChange={handleChange} />
@@ -177,7 +200,9 @@ export default function CidadaosPage() {
           <FormInput label="Vulnerabilidades" name="vulnerabilidade" value={form.vulnerabilidade} onChange={handleChange} placeholder="pessoa_idosa, deficiencia" />
           <FormInput label="Perfil social" name="perfil_social" value={form.perfil_social} onChange={handleChange} as="textarea" />
           <div className="md:col-span-2">
-            <button className="btn-primary" type="submit">Salvar cadastro</button>
+            <button className="btn-primary" type="submit" disabled={saving}>
+              {saving ? 'Salvando' : 'Salvar cadastro'}
+            </button>
           </div>
         </form>
       </Modal>

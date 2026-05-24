@@ -177,3 +177,5 @@ alter table public.users add constraint users_perfil_check check (perfil in ('AD
 alter table public.cidadaos add column if not exists status_atendimento text not null default 'aguardando_triagem';
 alter table public.cidadaos drop constraint if exists cidadaos_status_atendimento_check;
 alter table public.cidadaos add constraint cidadaos_status_atendimento_check check (status_atendimento in ('aguardando_triagem', 'em_triagem', 'aguardando_vaga', 'encaminhado', 'em_acolhimento', 'atendido', 'cancelado'));
+
+notify pgrst, 'reload schema';

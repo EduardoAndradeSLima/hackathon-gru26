@@ -79,7 +79,7 @@ export default function CitizenTriage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="border-b border-civic-line bg-white">
+      <header className="border-b border-guarulhos-600 bg-guarulhos-500">
         <div className="page-shell flex min-h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-guarulhos-700">
             <ArrowLeft size={18} />

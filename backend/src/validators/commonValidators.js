@@ -45,6 +45,16 @@ const cidadaoValidator = [
     .withMessage('Status do cidadao invalido.')
 ];
 
+const cidadaoPartialValidator = [
+  body('nome').optional({ checkFalsy: true }).notEmpty().withMessage('Nome obrigatorio.'),
+  body('cpf').optional({ checkFalsy: true }).notEmpty().withMessage('CPF obrigatorio.'),
+  body('telefone').optional({ checkFalsy: true }).isLength({ min: 8 }).withMessage('Telefone invalido.'),
+  body('status_atendimento')
+    .optional({ checkFalsy: true })
+    .isIn(['aguardando_triagem', 'em_triagem', 'aguardando_vaga', 'encaminhado', 'em_acolhimento', 'atendido', 'cancelado'])
+    .withMessage('Status do cidadao invalido.')
+];
+
 const solicitacaoValidator = [
   body('cidadao_id').notEmpty().withMessage('Cidadao obrigatorio.'),
   body('tipo_servico').notEmpty().withMessage('Tipo de servico obrigatorio.'),
@@ -73,6 +83,7 @@ module.exports = {
   oscValidator,
   vagaValidator,
   cidadaoValidator,
+  cidadaoPartialValidator,
   solicitacaoValidator,
   encaminhamentoValidator,
   triageValidator
