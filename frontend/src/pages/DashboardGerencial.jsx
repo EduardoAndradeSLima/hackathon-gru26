@@ -58,10 +58,10 @@ export default function DashboardGerencial() {
         <h2 className="text-base font-bold">Mapa de calor operacional</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {dashboard.charts.demanda_por_regiao.map((item) => (
-            <div key={item.regiao} className="rounded-card border border-civic-line bg-slate-50 p-4">
+            <div key={item.regiao} className="rounded-card border border-civic-line bg-guarulhos-50 p-4">
               <p className="font-bold">{item.regiao}</p>
               <div className="mt-3 h-3 rounded-full bg-slate-200">
-                <div className="h-3 rounded-full bg-guarulhos-700" style={{ width: `${Math.min(item.total * 25, 100)}%` }} />
+                <div className="h-3 rounded-full bg-guarulhos-500" style={{ width: `${Math.min(item.total * 25, 100)}%` }} />
               </div>
               <p className="mt-2 text-sm text-civic-muted">{item.total} demandas registradas</p>
             </div>

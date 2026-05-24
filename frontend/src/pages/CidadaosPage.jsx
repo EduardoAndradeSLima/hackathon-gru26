@@ -26,6 +26,27 @@ const emptyForm = {
   historico: []
 };
 
+function buildPayload(data) {
+  return {
+    nome: data.nome,
+    cpf: data.cpf,
+    nis: data.nis || '',
+    nascimento: data.nascimento || null,
+    telefone: data.telefone || '',
+    endereco: data.endereco || '',
+    bairro: data.bairro || '',
+    regiao: data.regiao || '',
+    perfil_social: data.perfil_social || '',
+    vulnerabilidade: Array.isArray(data.vulnerabilidade)
+      ? data.vulnerabilidade
+      : String(data.vulnerabilidade || '').split(',').map((item) => item.trim()).filter(Boolean),
+    grau_risco: data.grau_risco || 'baixo',
+    status_atendimento: data.status_atendimento || 'aguardando_triagem',
+    unidade_referencia: data.unidade_referencia || '',
+    historico: Array.isArray(data.historico) ? data.historico : []
+  };
+}
+
 export default function CidadaosPage() {
   const cidadaos = useResource('/cidadaos');
   const [open, setOpen] = useState(false);
@@ -47,6 +68,8 @@ export default function CidadaosPage() {
     setForm({
       ...emptyForm,
       ...row,
+      nascimento: row.nascimento || '',
+      historico: Array.isArray(row.historico) ? row.historico : [],
       status_atendimento: row.status_atendimento || 'aguardando_triagem',
       vulnerabilidade: Array.isArray(row.vulnerabilidade) ? row.vulnerabilidade.join(', ') : row.vulnerabilidade || ''
     });
@@ -55,11 +78,7 @@ export default function CidadaosPage() {
 
   async function submit(event) {
     event.preventDefault();
-    const payload = {
-      ...form,
-      vulnerabilidade: String(form.vulnerabilidade).split(',').map((item) => item.trim()).filter(Boolean),
-      historico: form.historico || []
-    };
+    const payload = buildPayload(form);
 
     if (editing) {
       await cidadaos.update(editing.id, payload);
@@ -71,7 +90,7 @@ export default function CidadaosPage() {
   }
 
   async function updateStatus(row, status) {
-    await cidadaos.update(row.id, { ...row, status_atendimento: status });
+    await cidadaos.update(row.id, buildPayload({ ...row, status_atendimento: status }));
   }
 
   async function uploadDocument(row, file) {

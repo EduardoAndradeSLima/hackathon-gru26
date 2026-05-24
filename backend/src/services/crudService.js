@@ -26,6 +26,24 @@ function sanitize(collection, item) {
   return item;
 }
 
+function cleanPayload(collection, payload) {
+  const data = { ...payload };
+
+  delete data.id;
+  delete data.created_at;
+  delete data.updated_at;
+
+  if (collection === 'users') {
+    delete data.senha_temporaria;
+  }
+
+  if (collection === 'cidadaos' && data.nascimento === '') {
+    data.nascimento = null;
+  }
+
+  return data;
+}
+
 async function list(collection, query = {}) {
   const items = await store.list(collection);
   const result = applyQuery(items, query, searchableFields[collection] || []);
@@ -47,7 +65,7 @@ async function get(collection, id) {
 }
 
 async function create(collection, payload) {
-  const data = { ...payload };
+  const data = cleanPayload(collection, payload);
 
   if (collection === 'users') {
     if (!data.senha) {
@@ -63,10 +81,12 @@ async function create(collection, payload) {
 }
 
 async function update(collection, id, payload) {
-  const data = { ...payload };
+  const data = cleanPayload(collection, payload);
 
-  if (collection === 'users' && data.senha) {
-    data.senha_hash = await bcrypt.hash(data.senha, 10);
+  if (collection === 'users') {
+    if (data.senha) {
+      data.senha_hash = await bcrypt.hash(data.senha, 10);
+    }
     delete data.senha;
   }
 

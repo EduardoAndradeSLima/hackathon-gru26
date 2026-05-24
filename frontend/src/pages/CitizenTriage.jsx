@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, UserPlus } from 'lucide-react';
 import AlertCard from '../components/AlertCard.jsx';
 import FormInput from '../components/FormInput.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
@@ -53,6 +53,7 @@ export default function CitizenTriage() {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [created, setCreated] = useState(null);
   const [error, setError] = useState('');
 
   function handleChange(event) {
@@ -64,18 +65,20 @@ export default function CitizenTriage() {
     event.preventDefault();
     setLoading(true);
     setError('');
+    setCreated(null);
     try {
       const { data } = await api.post('/triagem', form);
       setResult(data.resultado);
+      setCreated({ cidadao: data.cidadao, solicitacao: data.solicitacao });
     } catch (err) {
-      setError(err.response?.data?.message || 'Nao foi possivel analisar a triagem.');
+      setError(err.response?.data?.message || 'Nao foi possivel cadastrar o cidadao.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       <header className="border-b border-civic-line bg-white">
         <div className="page-shell flex min-h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-guarulhos-700">
@@ -126,7 +129,7 @@ export default function CitizenTriage() {
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {checkboxes.map(([name, label]) => (
                   <label key={name} className="flex min-h-11 items-center gap-3 rounded-card border border-civic-line bg-white px-3 text-sm font-semibold text-civic-ink">
-                    <input type="checkbox" name={name} checked={form[name]} onChange={handleChange} className="size-4 accent-guarulhos-700" />
+                    <input type="checkbox" name={name} checked={form[name]} onChange={handleChange} className="size-4 accent-guarulhos-600" />
                     {label}
                   </label>
                 ))}
@@ -145,11 +148,19 @@ export default function CitizenTriage() {
               </div>
             </section>
 
+            {created && (
+              <AlertCard
+                title="Cadastro enviado"
+                message={`O cidadão foi cadastrado e a solicitação entrou para análise da gestão. Protocolo: ${created.solicitacao?.id || created.cidadao?.id}.`}
+                tone="green"
+              />
+            )}
+
             {error && <AlertCard title="Atenção" message={error} tone="red" />}
 
             <button className="btn-primary w-full sm:w-auto" type="submit" disabled={loading}>
-              <Send size={18} aria-hidden="true" />
-              {loading ? 'Analisando' : 'Analisar triagem'}
+              <UserPlus size={18} aria-hidden="true" />
+              {loading ? 'Cadastrando' : 'Cadastrar cidadão'}
             </button>
           </form>
 

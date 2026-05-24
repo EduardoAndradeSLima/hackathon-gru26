@@ -41,7 +41,7 @@ export default function Login() {
   }
 
   return (
-    <div className="grid min-h-screen bg-slate-50 lg:grid-cols-[0.95fr_1.05fr]">
+    <div className="grid min-h-screen bg-white lg:grid-cols-[0.95fr_1.05fr]">
       <section className="hidden bg-guarulhos-900 p-10 text-white lg:flex lg:flex-col lg:justify-between">
         <Link to="/" className="flex items-center gap-3">
           <BrandLogo light />

@@ -56,7 +56,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="bg-slate-50 py-8">
+        <section className="bg-white py-8">
           <div className="page-shell grid gap-4 md:grid-cols-3">
             {highlights.map(({ title, text, icon: Icon }) => (
               <article key={title} className="surface p-5">
@@ -82,9 +82,9 @@ export default function LandingPage() {
             <div className="surface p-5">
               <h3 className="text-base font-bold">Fluxo integrado</h3>
               <ol className="mt-4 space-y-3 text-sm text-civic-muted">
-                <li className="rounded-card bg-slate-50 p-3"><strong className="text-civic-ink">1.</strong> Cidadão ou profissional preenche a triagem.</li>
-                <li className="rounded-card bg-slate-50 p-3"><strong className="text-civic-ink">2.</strong> O sistema sugere serviços, OSCs e vagas compatíveis.</li>
-                <li className="rounded-card bg-slate-50 p-3"><strong className="text-civic-ink">3.</strong> A equipe humana valida e encaminha com auditoria.</li>
+                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">1.</strong> Cidadão ou profissional preenche a triagem.</li>
+                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">2.</strong> O sistema sugere serviços, OSCs e vagas compatíveis.</li>
+                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">3.</strong> A equipe humana valida e encaminha com auditoria.</li>
               </ol>
             </div>
           </div>

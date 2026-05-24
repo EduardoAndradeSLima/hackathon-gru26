@@ -64,7 +64,7 @@ export default function DashboardAdmin() {
           <div className="space-y-3">
             {dashboard.gargalos.length === 0 && <p className="text-sm text-civic-muted">Nenhum gargalo crítico no momento.</p>}
             {dashboard.gargalos.map((item) => (
-              <div key={item.servico} className="flex items-center justify-between rounded-card bg-slate-50 p-3">
+              <div key={item.servico} className="flex items-center justify-between rounded-card bg-guarulhos-50 p-3">
                 <div>
                   <p className="font-semibold">{item.servico}</p>
                   <p className="text-sm text-civic-muted">{item.total} solicitações para {item.vagas_disponiveis} vagas disponíveis</p>

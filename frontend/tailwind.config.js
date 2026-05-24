@@ -5,10 +5,10 @@ export default {
     extend: {
       colors: {
         guarulhos: {
-          50: '#f5f4ff',
-          100: '#e9e6ff',
-          500: '#3EA3DC',
-          600: '#2B255C',
+          50: '#fff9e6',
+          100: '#fff1bf',
+          500: '#FFD970',
+          600: '#FAB748',
           700: '#2B255C',
           900: '#171236',
           green: '#95B53D',
@@ -24,7 +24,7 @@ export default {
           green: '#1CA141',
           ink: '#1f1b3f',
           muted: '#64748b',
-          line: '#e3e0f0'
+          line: '#efe6c8'
         }
       },
       boxShadow: {

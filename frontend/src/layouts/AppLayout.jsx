@@ -7,7 +7,7 @@ export default function AppLayout() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-civic-ink">
+    <div className="min-h-screen bg-white text-civic-ink">
       <div className="flex min-h-screen">
         <Sidebar open={open} onClose={() => setOpen(false)} />
         {open && (

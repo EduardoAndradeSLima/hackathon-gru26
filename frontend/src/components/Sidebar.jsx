@@ -44,7 +44,7 @@ export default function Sidebar({ open, onClose }) {
               to={to}
               end={end}
               onClick={onClose}
-              className={({ isActive }) => `flex min-h-11 items-center gap-3 rounded-card px-3 text-sm font-semibold transition ${isActive ? 'bg-guarulhos-700 text-white' : 'text-civic-muted hover:bg-guarulhos-50 hover:text-guarulhos-900'}`}
+              className={({ isActive }) => `flex min-h-11 items-center gap-3 rounded-card px-3 text-sm font-semibold transition ${isActive ? 'bg-guarulhos-500 text-guarulhos-900' : 'text-civic-muted hover:bg-guarulhos-50 hover:text-guarulhos-900'}`}
             >
               <Icon size={18} aria-hidden="true" />
               <span>{label}</span>

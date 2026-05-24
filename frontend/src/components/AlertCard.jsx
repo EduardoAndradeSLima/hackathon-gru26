@@ -1,4 +1,4 @@
-import { AlertTriangle, Info } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 
 export default function AlertCard({ title, message, tone = 'blue' }) {
   const isDanger = tone === 'red' || tone === 'critico' || tone === 'alto';
@@ -6,8 +6,10 @@ export default function AlertCard({ title, message, tone = 'blue' }) {
     ? 'border-red-200 bg-red-50 text-red-800'
     : tone === 'yellow'
       ? 'border-amber-200 bg-amber-50 text-amber-800'
-      : 'border-blue-200 bg-blue-50 text-blue-800';
-  const Icon = isDanger ? AlertTriangle : Info;
+      : tone === 'green'
+        ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+        : 'border-blue-200 bg-blue-50 text-blue-800';
+  const Icon = isDanger ? AlertTriangle : tone === 'green' ? CheckCircle2 : Info;
 
   return (
     <article className={`rounded-card border p-4 ${classes}`}>

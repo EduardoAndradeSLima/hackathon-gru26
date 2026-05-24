@@ -84,7 +84,7 @@ export default function MatchPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             {booleanFields.map(([name, label]) => (
               <label key={name} className="flex min-h-11 items-center gap-3 rounded-card border border-civic-line px-3 text-sm font-semibold">
-                <input type="checkbox" className="size-4 accent-guarulhos-700" name={name} checked={Boolean(form[name])} onChange={handleChange} />
+                <input type="checkbox" className="size-4 accent-guarulhos-600" name={name} checked={Boolean(form[name])} onChange={handleChange} />
                 {label}
               </label>
             ))}
