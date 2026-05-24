@@ -31,6 +31,7 @@ function getDynamicPriority(row) {
 
 export default function FilaEsperaPage() {
   const solicitacoes = useResource('/solicitacoes', { tipo_servico: 'ILPI', limit: 100 });
+  const vagas = useResource('/vagas', { tipo_servico: 'ILPI', limit: 100 });
   const [cidadaos, setCidadaos] = useState([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -68,6 +69,7 @@ export default function FilaEsperaPage() {
       const { data } = await api.patch(`/solicitacoes/${row.id}/encaminhar`);
       setFeedback(`Solicitacao encaminhada para ${data.osc?.nome || 'OSC'} e vaga reservada.`);
       await solicitacoes.load();
+      await vagas.load();
       await loadCidadaos();
     } catch (err) {
       setError(err.response?.data?.message || 'Nao foi possivel encaminhar a solicitacao.');
@@ -75,13 +77,43 @@ export default function FilaEsperaPage() {
   }
 
   const citizenOptions = cidadaos.map((cidadao) => ({ value: cidadao.id, label: cidadao.nome }));
-  const citizenById = Object.fromEntries(cidadaos.map((cidadao) => [cidadao.id, cidadao.nome]));
+  const citizenById = Object.fromEntries(cidadaos.map((cidadao) => [cidadao.id, cidadao]));
   const citizenStatusById = Object.fromEntries(cidadaos.map((cidadao) => [cidadao.id, cidadao.status_atendimento || 'aguardando_triagem']));
-  const dynamicQueue = [...solicitacoes.items].sort((a, b) => {
+  const availableVagas = vagas.items.filter((vaga) => vaga.status === 'disponivel');
+  const latestByCitizen = Object.values(solicitacoes.items.reduce((acc, item) => {
+    const current = acc[item.cidadao_id];
+    const currentDate = new Date(current?.updated_at || current?.created_at || current?.data_solicitacao || 0).getTime();
+    const itemDate = new Date(item.updated_at || item.created_at || item.data_solicitacao || 0).getTime();
+    if (!current || itemDate >= currentDate) {
+      acc[item.cidadao_id] = item;
+    }
+    return acc;
+  }, {}));
+  const dynamicQueue = latestByCitizen.sort((a, b) => {
     const priorityDiff = priorityWeight[getDynamicPriority(b)] - priorityWeight[getDynamicPriority(a)];
     if (priorityDiff !== 0) return priorityDiff;
     return new Date(a.data_solicitacao || 0).getTime() - new Date(b.data_solicitacao || 0).getTime();
   });
+
+  function getCitizen(row) {
+    return citizenById[row.cidadao_id] || null;
+  }
+
+  function getCitizenGrade(row) {
+    const citizen = getCitizen(row);
+    return Array.isArray(citizen?.vulnerabilidade)
+      ? citizen.vulnerabilidade.find((item) => ['grau_1', 'grau_2', 'grau_3'].includes(item))
+      : null;
+  }
+
+  function hasCompatibleVacancy(row) {
+    const grade = getCitizenGrade(row);
+    if (!grade) {
+      return availableVagas.length > 0;
+    }
+
+    return availableVagas.some((vaga) => vaga.grau_dependencia === grade);
+  }
 
   return (
     <div className="space-y-4">
@@ -92,6 +124,11 @@ export default function FilaEsperaPage() {
 
       {feedback && <p className="rounded-card bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">{feedback}</p>}
       {error && <p className="rounded-card bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
+      {!vagas.loading && availableVagas.length === 0 && (
+        <p className="rounded-card bg-amber-50 p-3 text-sm font-semibold text-amber-700">
+          Todas as vagas ILPI estao reservadas, ocupadas ou bloqueadas. Novos casos permanecem na fila para avaliacao humana.
+        </p>
+      )}
 
       <FilterBar search={solicitacoes.query.search || ''} onSearch={(value) => solicitacoes.setQuery((prev) => ({ ...prev, search: value }))} action={(
         <button className="btn-primary" type="button" onClick={() => setOpen(true)}>
@@ -104,7 +141,7 @@ export default function FilaEsperaPage() {
         data={dynamicQueue}
         loading={solicitacoes.loading}
         columns={[
-          { key: 'cidadao_id', label: 'Nome', render: (row) => citizenById[row.cidadao_id] || row.cidadao_id },
+          { key: 'cidadao_id', label: 'Nome', render: (row) => getCitizen(row)?.nome || row.cidadao_id },
           { key: 'prioridade', label: 'Prioridade dinamica', render: (row) => <StatusBadge value={getDynamicPriority(row)} /> },
           { key: 'status', label: 'Solicitacao', render: (row) => <StatusBadge value={row.status} /> },
           { key: 'status_cidadao', label: 'Status do cidadao', render: (row) => <StatusBadge value={citizenStatusById[row.cidadao_id]} /> },
@@ -114,6 +151,10 @@ export default function FilaEsperaPage() {
           ['encaminhada', 'concluida', 'cancelada'].includes(row.status) ? (
             <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">
               Sem acao pendente
+            </span>
+          ) : !hasCompatibleVacancy(row) ? (
+            <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700">
+              Sem vaga compativel
             </span>
           ) : (
             <button

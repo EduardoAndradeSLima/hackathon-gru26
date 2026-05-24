@@ -7,6 +7,23 @@ const { logAction } = require('../services/auditService');
 
 const base = createCrudController('solicitacoes');
 
+const create = asyncHandler(async (req, res) => {
+  const solicitacoes = await store.list('solicitacoes');
+  const existing = solicitacoes.find((item) =>
+    item.cidadao_id === req.body.cidadao_id
+    && item.tipo_servico === req.body.tipo_servico
+    && !['concluida', 'cancelada'].includes(item.status)
+  );
+
+  if (existing) {
+    return res.json(existing);
+  }
+
+  const item = await crudService.create('solicitacoes', req.body);
+  await logAction(req, 'CRIAR', 'solicitacoes', item.id, { after: item });
+  return res.status(201).json(item);
+});
+
 function scoreVaga(vaga, osc, cidadao, solicitacao) {
   let score = 0;
 
@@ -60,15 +77,19 @@ const encaminhar = asyncHandler(async (req, res) => {
     .sort((a, b) => b.score - a.score);
 
   if (!candidatas.length) {
+    const vulnerabilidades = Array.isArray(cidadao?.vulnerabilidade) ? cidadao.vulnerabilidade : [];
+    const grauIlpi = vulnerabilidades.find((item) => ['grau_1', 'grau_2', 'grau_3'].includes(item));
     await crudService.update('cidadaos', cidadao.id, {
       status_atendimento: 'aguardando_vaga',
       historico: [
         ...(cidadao.historico || []),
-        `Sem vaga disponivel para ${solicitacao.tipo_servico} em ${new Date().toLocaleString('pt-BR')}.`
+        `Sem vaga ILPI compativel${grauIlpi ? ` com ${grauIlpi}` : ''} em ${new Date().toLocaleString('pt-BR')}.`
       ]
     });
 
-    throw new ApiError(409, 'Nao existe vaga disponivel para este tipo de servico.');
+    throw new ApiError(409, grauIlpi
+      ? `Nao existe vaga ILPI disponivel compativel com ${grauIlpi}. O caso permanece na fila.`
+      : 'Nao existe vaga ILPI disponivel compativel. O caso permanece na fila.');
   }
 
   const escolhida = candidatas[0];
@@ -119,4 +140,4 @@ const encaminhar = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { ...base, encaminhar };
+module.exports = { ...base, create, encaminhar };

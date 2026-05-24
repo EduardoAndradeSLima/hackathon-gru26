@@ -56,8 +56,28 @@ function text(value) {
   return String(value || '').trim();
 }
 
-function getCpf(form) {
-  return text(form.cpf) || `triagem-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+function normalizeKey(value) {
+  return text(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function findExistingCitizen(citizens, form, cpf, nis) {
+  const name = normalizeKey(form.nome);
+  const phone = normalizeKey(form.telefone);
+  const neighborhood = normalizeKey(form.bairro);
+
+  return citizens.find((item) => {
+    if (cpf && item.cpf === cpf) return true;
+    if (nis && item.nis === nis) return true;
+
+    const sameName = normalizeKey(item.nome) === name;
+    const samePhone = phone && normalizeKey(item.telefone) === phone;
+    const sameNeighborhood = neighborhood && normalizeKey(item.bairro) === neighborhood;
+
+    return !cpf && !nis && sameName && (samePhone || sameNeighborhood);
+  });
 }
 
 function buildVulnerabilities(form, resultado) {
@@ -114,10 +134,11 @@ function normalizeForm(form) {
 }
 
 async function upsertCitizen(form, resultado) {
-  const cpf = getCpf(form);
+  const providedCpf = text(form.cpf);
   const nis = text(form.nis);
   const citizens = await store.list('cidadaos');
-  const existing = citizens.find((item) => item.cpf === cpf || (nis && item.nis === nis));
+  const existing = findExistingCitizen(citizens, form, providedCpf, nis);
+  const cpf = existing?.cpf || providedCpf || `triagem-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const grau = resultado.classificacao.grau_dependencia;
   const score = resultado.classificacao.indice_vulnerabilidade;
   const historyEntry = `Cadastro recebido pela triagem ILPI em ${new Date().toLocaleString('pt-BR')}. Grau sugerido: ${grau || 'nao informado'}. Score: ${score ?? resultado.classificacao.score_risco}. Prioridade sugerida: ${resultado.classificacao.prioridade}.`;
@@ -158,6 +179,21 @@ async function createRequest(form, cidadao, resultado) {
     || resultado.servicos_compativeis?.[0]?.servico
     || 'Acompanhamento socioassistencial';
   const requestedAt = new Date().toISOString();
+  const solicitacoes = await store.list('solicitacoes');
+  const existing = solicitacoes
+    .filter((item) =>
+      item.cidadao_id === cidadao.id
+      && item.tipo_servico === service
+      && !['concluida', 'cancelada'].includes(item.status)
+    )
+    .sort((a, b) => new Date(b.updated_at || b.created_at || b.data_solicitacao || 0) - new Date(a.updated_at || a.created_at || a.data_solicitacao || 0))[0];
+
+  if (existing) {
+    return store.update('solicitacoes', existing.id, {
+      prioridade: resultado.classificacao.prioridade,
+      status: existing.status === 'encaminhada' ? existing.status : 'em_analise'
+    });
+  }
 
   return store.create('solicitacoes', {
     cidadao_id: cidadao.id,
@@ -173,6 +209,20 @@ async function routeForHumanReview(form, cidadao, solicitacao, resultado) {
   const suggestion = resultado.recomendacoes.find((item) => item.vaga.status === 'disponivel');
   const now = new Date().toISOString();
   const regionalUnit = getIlpiReferenceUnit(cidadao.regiao);
+  const encaminhamentos = await store.list('encaminhamentos');
+  const encaminhamentoAtivo = encaminhamentos.find((item) =>
+    item.solicitacao_id === solicitacao.id && ['aguardando_osc', 'aceito'].includes(item.status)
+  );
+
+  if (encaminhamentoAtivo) {
+    return {
+      cidadao,
+      solicitacao,
+      encaminhamento: encaminhamentoAtivo,
+      osc: null,
+      fluxo: 'encaminhamento_existente'
+    };
+  }
 
   if (!suggestion) {
     const updatedRequest = await store.update('solicitacoes', solicitacao.id, {
