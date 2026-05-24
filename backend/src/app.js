@@ -28,6 +28,15 @@ app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(apiLimiter);
 app.use('/uploads', express.static(path.join(__dirname, '..', env.uploadDir)));
 
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'Guarulhos Social Vagas API',
+    status: 'online',
+    health: '/api/health',
+    docs: 'Use as rotas iniciadas por /api.'
+  });
+});
+
 app.use('/api', routes);
 app.use(notFound);
 app.use(errorHandler);
