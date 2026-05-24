@@ -31,7 +31,7 @@ const oscValidator = [
 
 const vagaValidator = [
   body('osc_id').notEmpty().withMessage('OSC obrigatoria.'),
-  body('tipo_servico').notEmpty().withMessage('Tipo de servico obrigatorio.'),
+  body('tipo_servico').equals('ILPI').withMessage('A gestao atual aceita apenas vagas ILPI.'),
   body('status').isIn(['disponivel', 'ocupada', 'reservada', 'bloqueada']).withMessage('Status invalido.')
 ];
 
@@ -57,7 +57,7 @@ const cidadaoPartialValidator = [
 
 const solicitacaoValidator = [
   body('cidadao_id').notEmpty().withMessage('Cidadao obrigatorio.'),
-  body('tipo_servico').notEmpty().withMessage('Tipo de servico obrigatorio.'),
+  body('tipo_servico').equals('ILPI').withMessage('A fila atual aceita apenas solicitacoes ILPI.'),
   body('prioridade').isIn(['baixa', 'media', 'alta', 'critica']).withMessage('Prioridade invalida.'),
   body('status').isIn(['pendente', 'em_analise', 'encaminhada', 'concluida', 'cancelada']).withMessage('Status invalido.')
 ];

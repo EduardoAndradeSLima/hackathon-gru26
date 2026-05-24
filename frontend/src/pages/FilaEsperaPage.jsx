@@ -7,11 +7,11 @@ import Modal from '../components/Modal.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { useResource } from '../hooks/useResource.js';
 import { api } from '../services/api.js';
-import { statusSolicitacao, tiposServico, urgencias } from '../services/options.js';
+import { statusSolicitacao, urgencias } from '../services/options.js';
 
 const emptyForm = {
   cidadao_id: '',
-  tipo_servico: '',
+  tipo_servico: 'ILPI',
   prioridade: 'media',
   status: 'pendente',
   data_solicitacao: new Date().toISOString(),
@@ -25,29 +25,12 @@ const priorityWeight = {
   baixa: 1
 };
 
-function getWaitDays(row) {
-  if (!row.data_solicitacao) return Number(row.tempo_espera_dias || 0);
-
-  const requestedAt = new Date(row.data_solicitacao).getTime();
-  if (Number.isNaN(requestedAt)) return Number(row.tempo_espera_dias || 0);
-
-  const diff = Date.now() - requestedAt;
-  return Math.max(Math.floor(diff / 86400000), Number(row.tempo_espera_dias || 0));
-}
-
 function getDynamicPriority(row) {
-  const wait = getWaitDays(row);
-  const current = row.prioridade || 'baixa';
-
-  if (wait >= 60) return 'critica';
-  if (wait >= 30 && priorityWeight[current] < priorityWeight.alta) return 'alta';
-  if (wait >= 15 && priorityWeight[current] < priorityWeight.media) return 'media';
-
-  return current;
+  return row.prioridade || 'baixa';
 }
 
 export default function FilaEsperaPage() {
-  const solicitacoes = useResource('/solicitacoes');
+  const solicitacoes = useResource('/solicitacoes', { tipo_servico: 'ILPI', limit: 100 });
   const [cidadaos, setCidadaos] = useState([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -71,8 +54,7 @@ export default function FilaEsperaPage() {
     event.preventDefault();
     await solicitacoes.create({
       ...form,
-      data_solicitacao: new Date().toISOString(),
-      tempo_espera_dias: 0
+      data_solicitacao: new Date().toISOString()
     });
     setOpen(false);
     setForm(emptyForm);
@@ -98,13 +80,13 @@ export default function FilaEsperaPage() {
   const dynamicQueue = [...solicitacoes.items].sort((a, b) => {
     const priorityDiff = priorityWeight[getDynamicPriority(b)] - priorityWeight[getDynamicPriority(a)];
     if (priorityDiff !== 0) return priorityDiff;
-    return getWaitDays(b) - getWaitDays(a);
+    return new Date(a.data_solicitacao || 0).getTime() - new Date(b.data_solicitacao || 0).getTime();
   });
 
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm font-bold uppercase text-guarulhos-700">Fila de espera</p>
+        <p className="text-sm font-bold uppercase text-guarulhos-700">Fila ILPI</p>
         <h1 className="text-3xl font-bold">Prioridade, encaminhamento e status</h1>
       </div>
 
@@ -122,32 +104,34 @@ export default function FilaEsperaPage() {
         data={dynamicQueue}
         loading={solicitacoes.loading}
         columns={[
-          { key: 'cidadao_id', label: 'Cidadao', render: (row) => citizenById[row.cidadao_id] || row.cidadao_id },
-          { key: 'tipo_servico', label: 'Servico' },
+          { key: 'cidadao_id', label: 'Nome', render: (row) => citizenById[row.cidadao_id] || row.cidadao_id },
           { key: 'prioridade', label: 'Prioridade dinamica', render: (row) => <StatusBadge value={getDynamicPriority(row)} /> },
           { key: 'status', label: 'Solicitacao', render: (row) => <StatusBadge value={row.status} /> },
-          { key: 'status_cidadao', label: 'Cidadao', render: (row) => <StatusBadge value={citizenStatusById[row.cidadao_id]} /> },
-          { key: 'tempo_espera_dias', label: 'Espera', render: (row) => `${getWaitDays(row)} dias` },
+          { key: 'status_cidadao', label: 'Status do cidadao', render: (row) => <StatusBadge value={citizenStatusById[row.cidadao_id]} /> },
           { key: 'data_solicitacao', label: 'Solicitada em', render: (row) => new Date(row.data_solicitacao).toLocaleDateString('pt-BR') }
         ]}
         actions={(row) => (
-          <button
-            className="btn-primary px-3"
-            type="button"
-            onClick={() => encaminhar(row)}
-            disabled={['encaminhada', 'concluida', 'cancelada'].includes(row.status)}
-            aria-label="Encaminhar para OSC com vaga disponivel"
-          >
-            <Send size={16} />
-            Encaminhar
-          </button>
+          ['encaminhada', 'concluida', 'cancelada'].includes(row.status) ? (
+            <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">
+              Sem acao pendente
+            </span>
+          ) : (
+            <button
+              className="btn-primary px-3"
+              type="button"
+              onClick={() => encaminhar(row)}
+              aria-label="Encaminhar para OSC com vaga disponivel"
+            >
+              <Send size={16} />
+              Encaminhar
+            </button>
+          )
         )}
       />
 
       <Modal open={open} title="Nova solicitacao" onClose={() => setOpen(false)}>
         <form className="grid gap-4 md:grid-cols-2" onSubmit={submit}>
           <FormInput label="Cidadao" name="cidadao_id" value={form.cidadao_id} onChange={handleChange} as="select" options={citizenOptions} required />
-          <FormInput label="Tipo de servico" name="tipo_servico" value={form.tipo_servico} onChange={handleChange} as="select" options={tiposServico} required />
           <FormInput label="Prioridade" name="prioridade" value={form.prioridade} onChange={handleChange} as="select" options={urgencias} required />
           <FormInput label="Status" name="status" value={form.status} onChange={handleChange} as="select" options={statusSolicitacao} required />
           <div className="md:col-span-2">

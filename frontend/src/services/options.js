@@ -39,12 +39,7 @@ export function getRegionByBairro(bairro) {
 }
 
 export const tiposServico = [
-  'Acolhimento adulto',
-  'ILPI',
-  'Acolhimento infantil',
-  'Violencia domestica',
-  'Centro Dia',
-  'Acompanhamento socioassistencial'
+  'ILPI'
 ].map((value) => ({ value, label: value }));
 
 export const urgencias = [
@@ -88,9 +83,7 @@ export const perfisUsuario = [
 ];
 
 export const grausDependencia = [
-  { value: 'nao_aplicavel', label: 'Nao aplicavel' },
-  { value: 'baixo', label: 'Baixo' },
-  { value: 'grau_1', label: 'Grau 1' },
-  { value: 'grau_2', label: 'Grau 2' },
-  { value: 'grau_3', label: 'Grau 3' }
+  { value: 'grau_1', label: 'Grau 1 - Independente' },
+  { value: 'grau_2', label: 'Grau 2 - Semi-dependente' },
+  { value: 'grau_3', label: 'Grau 3 - Dependente total' }
 ];

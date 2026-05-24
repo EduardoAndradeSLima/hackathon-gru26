@@ -12,12 +12,11 @@ async function rowsFor(type) {
   ]);
 
   if (type === 'ocupacao') {
-    return vagas.map((vaga) => {
+    return vagas.filter((vaga) => vaga.tipo_servico === 'ILPI').map((vaga) => {
       const osc = oscs.find((item) => item.id === vaga.osc_id);
       return {
         vaga_id: vaga.id,
         osc: osc?.nome || '',
-        tipo_servico: vaga.tipo_servico,
         status: vaga.status,
         grau_dependencia: vaga.grau_dependencia,
         atualizado_em: vaga.updated_at
@@ -26,22 +25,21 @@ async function rowsFor(type) {
   }
 
   if (type === 'demanda') {
-    return solicitacoes.map((solicitacao) => {
+    return solicitacoes.filter((solicitacao) => solicitacao.tipo_servico === 'ILPI').map((solicitacao) => {
       const cidadao = cidadaos.find((item) => item.id === solicitacao.cidadao_id);
       return {
         solicitacao_id: solicitacao.id,
         cidadao: cidadao?.nome || '',
         regiao: cidadao?.regiao || '',
-        tipo_servico: solicitacao.tipo_servico,
         prioridade: solicitacao.prioridade,
-        status: solicitacao.status,
-        tempo_espera_dias: solicitacao.tempo_espera_dias
+        status: solicitacao.status
       };
     });
   }
 
   if (type === 'encaminhamentos') {
-    return encaminhamentos.map((encaminhamento) => ({
+    const vagasIlpiIds = new Set(vagas.filter((vaga) => vaga.tipo_servico === 'ILPI').map((vaga) => vaga.id));
+    return encaminhamentos.filter((encaminhamento) => vagasIlpiIds.has(encaminhamento.vaga_id)).map((encaminhamento) => ({
       encaminhamento_id: encaminhamento.id,
       solicitacao_id: encaminhamento.solicitacao_id,
       vaga_id: encaminhamento.vaga_id,

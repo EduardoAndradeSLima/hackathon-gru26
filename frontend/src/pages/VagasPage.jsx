@@ -7,19 +7,19 @@ import Modal from '../components/Modal.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { useResource } from '../hooks/useResource.js';
 import { api } from '../services/api.js';
-import { grausDependencia, statusVaga, tiposServico } from '../services/options.js';
+import { grausDependencia, statusVaga } from '../services/options.js';
 
 const emptyForm = {
   osc_id: '',
-  tipo_servico: '',
+  tipo_servico: 'ILPI',
   perfil_aceito: '',
-  grau_dependencia: 'nao_aplicavel',
+  grau_dependencia: 'grau_2',
   status: 'disponivel',
   observacoes: ''
 };
 
 export default function VagasPage() {
-  const vagas = useResource('/vagas');
+  const vagas = useResource('/vagas', { tipo_servico: 'ILPI', limit: 100 });
   const [oscs, setOscs] = useState([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -68,15 +68,17 @@ export default function VagasPage() {
     setOpen(false);
   }
 
-  const oscOptions = oscs.map((osc) => ({ value: osc.id, label: osc.nome }));
+  const ilpiOscs = oscs.filter((osc) => osc.tipo_servico === 'ILPI');
+  const oscOptions = ilpiOscs.map((osc) => ({ value: osc.id, label: osc.nome }));
   const byOsc = Object.fromEntries(oscs.map((osc) => [osc.id, osc.nome]));
+  const ilpiVagas = vagas.items.filter((item) => item.tipo_servico === 'ILPI');
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-bold uppercase text-guarulhos-700">Gestão de vagas</p>
-          <h1 className="text-3xl font-bold">Vagas socioassistenciais</h1>
+          <h1 className="text-3xl font-bold">Vagas ILPI</h1>
         </div>
       </div>
 
@@ -90,10 +92,9 @@ export default function VagasPage() {
       {vagas.error && <p className="rounded-card bg-red-50 p-3 text-sm font-semibold text-red-700">{vagas.error}</p>}
 
       <DataTable
-        data={vagas.items}
+        data={ilpiVagas}
         loading={vagas.loading}
         columns={[
-          { key: 'tipo_servico', label: 'Serviço' },
           { key: 'osc_id', label: 'OSC', render: (row) => byOsc[row.osc_id] || row.osc_id },
           { key: 'grau_dependencia', label: 'Dependência', render: (row) => String(row.grau_dependencia).replaceAll('_', ' ') },
           { key: 'status', label: 'Status', render: (row) => <StatusBadge value={row.status} /> },
@@ -114,7 +115,6 @@ export default function VagasPage() {
       <Modal open={open} title={editing ? 'Editar vaga' : 'Nova vaga'} onClose={() => setOpen(false)}>
         <form className="grid gap-4 md:grid-cols-2" onSubmit={submit}>
           <FormInput label="OSC" name="osc_id" value={form.osc_id} onChange={handleChange} as="select" options={oscOptions} required />
-          <FormInput label="Tipo de serviço" name="tipo_servico" value={form.tipo_servico} onChange={handleChange} as="select" options={tiposServico} required />
           <FormInput label="Status" name="status" value={form.status} onChange={handleChange} as="select" options={statusVaga} required />
           <FormInput label="Grau de dependência" name="grau_dependencia" value={form.grau_dependencia} onChange={handleChange} as="select" options={grausDependencia} />
           <FormInput label="Perfil aceito" name="perfil_aceito" value={form.perfil_aceito} onChange={handleChange} placeholder="idoso, deficiencia, dependencia_grau_2" />

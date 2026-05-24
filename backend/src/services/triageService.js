@@ -157,7 +157,6 @@ async function createRequest(form, cidadao, resultado) {
   const service = text(form.tipo_necessidade) || 'ILPI'
     || resultado.servicos_compativeis?.[0]?.servico
     || 'Acompanhamento socioassistencial';
-  const waitingDays = 0;
   const requestedAt = new Date().toISOString();
 
   return store.create('solicitacoes', {
@@ -166,8 +165,7 @@ async function createRequest(form, cidadao, resultado) {
     prioridade: resultado.classificacao.prioridade,
     status: 'pendente',
     data_solicitacao: requestedAt,
-    data_encaminhamento: null,
-    tempo_espera_dias: waitingDays
+    data_encaminhamento: null
   });
 }
 

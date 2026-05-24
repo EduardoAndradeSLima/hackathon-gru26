@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle, Clock, ClipboardList, Home, Users } from 'lucide-react';
+import { AlertTriangle, ClipboardCheck, ClipboardList, Home, Users } from 'lucide-react';
 import AlertCard from '../components/AlertCard.jsx';
 import DashboardCard from '../components/DashboardCard.jsx';
 import Loading from '../components/Loading.jsx';
@@ -10,14 +10,25 @@ import { api } from '../services/api.js';
 export default function DashboardAdmin() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     let active = true;
     async function load() {
-      const { data } = await api.get('/dashboard');
-      if (active) {
-        setDashboard(data);
-        setLoading(false);
+      try {
+        const { data } = await api.get('/dashboard');
+        if (active) {
+          setDashboard(data);
+          setError('');
+        }
+      } catch (err) {
+        if (active) {
+          setError(err.response?.data?.message || 'Nao foi possivel carregar o painel.');
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -33,6 +44,10 @@ export default function DashboardAdmin() {
     return <Loading label="Carregando painel" />;
   }
 
+  if (error || !dashboard) {
+    return <AlertCard title="Painel indisponivel" message={error || 'Nao foi possivel carregar os indicadores.'} tone="alto" />;
+  }
+
   const cards = dashboard.cards;
 
   return (
@@ -45,12 +60,12 @@ export default function DashboardAdmin() {
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <DashboardCard title="Vagas disponíveis" value={cards.vagas_disponiveis} icon={Home} tone="green" description="Atualizadas pelas OSCs e Central." />
         <DashboardCard title="Vagas ocupadas" value={cards.vagas_ocupadas} icon={ClipboardList} tone="gray" description="Ocupação registrada no sistema." />
-        <DashboardCard title="Tempo médio" value={`${cards.tempo_medio_espera} dias`} icon={Clock} tone="yellow" description="Baseado nas solicitações ativas." />
+        <DashboardCard title="Triagens ILPI" value={cards.triagens_ilpi || 0} icon={ClipboardCheck} tone="yellow" description="Casos recebidos pela triagem padronizada." />
         <DashboardCard title="Pendências" value={cards.solicitacoes_pendentes} icon={AlertTriangle} tone="red" description="Fila aguardando análise ou decisão." />
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <ChartPanel title="Fila por serviço">
+        <ChartPanel title="Fila ILPI">
           <SimpleBarChart data={dashboard.charts.fila_por_servico} xKey="servico" dataKey="total" />
         </ChartPanel>
         <ChartPanel title="Ocupação por status">
@@ -85,7 +100,7 @@ export default function DashboardAdmin() {
             />
           ))}
           {!dashboard.alertas_criticos.length && (
-            <AlertCard title="Sem alertas críticos" message="Não há solicitações com risco crítico ou espera acima do parâmetro." />
+            <AlertCard title="Sem alertas criticos" message="Nao ha solicitacoes ILPI com risco critico aguardando decisao." />
           )}
         </div>
       </section>

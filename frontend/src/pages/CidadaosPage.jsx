@@ -54,6 +54,8 @@ export default function CidadaosPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [pageError, setPageError] = useState('');
 
   function handleChange(event) {
     setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -86,6 +88,8 @@ export default function CidadaosPage() {
 
     setSaving(true);
     setFormError('');
+    setFeedback('');
+    setPageError('');
     try {
       if (editing) {
         await api.patch(`/cidadaos/${editing.id}`, payload);
@@ -95,6 +99,7 @@ export default function CidadaosPage() {
       }
 
       setOpen(false);
+      setFeedback(editing ? 'Cadastro atualizado com sucesso.' : 'Cidadao cadastrado com sucesso.');
     } catch (err) {
       setFormError(err.response?.data?.message || 'Nao foi possivel salvar o cadastro.');
     } finally {
@@ -103,23 +108,33 @@ export default function CidadaosPage() {
   }
 
   async function updateStatus(row, status) {
+    setFeedback('');
+    setPageError('');
     try {
       await api.patch(`/cidadaos/${row.id}`, { status_atendimento: status });
       await cidadaos.load();
+      setFeedback('Status atualizado e vaga vinculada sincronizada.');
     } catch (err) {
-      alert(err.response?.data?.message || 'Nao foi possivel alterar o status.');
+      setPageError(err.response?.data?.message || 'Nao foi possivel alterar o status.');
     }
   }
 
   async function uploadDocument(row, file) {
     if (!file) return;
 
-    const payload = new FormData();
-    payload.append('documento', file);
-    await api.post(`/cidadaos/${row.id}/documentos`, payload, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    await cidadaos.load();
+    setFeedback('');
+    setPageError('');
+    try {
+      const payload = new FormData();
+      payload.append('documento', file);
+      await api.post(`/cidadaos/${row.id}/documentos`, payload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      await cidadaos.load();
+      setFeedback('Documento anexado com sucesso.');
+    } catch (err) {
+      setPageError(err.response?.data?.message || 'Nao foi possivel anexar o documento.');
+    }
   }
 
   return (
@@ -135,6 +150,10 @@ export default function CidadaosPage() {
           Novo cidadao
         </button>
       )} />
+
+      {feedback && <p className="rounded-card bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">{feedback}</p>}
+      {pageError && <p className="rounded-card bg-red-50 p-3 text-sm font-semibold text-red-700">{pageError}</p>}
+      {cidadaos.error && <p className="rounded-card bg-red-50 p-3 text-sm font-semibold text-red-700">{cidadaos.error}</p>}
 
       <DataTable
         data={cidadaos.items}

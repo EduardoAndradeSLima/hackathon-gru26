@@ -1,17 +1,26 @@
 # FacilitaGRU
 
-Sistema web para gestao inteligente de vagas socioassistenciais, integrando Secretaria de Desenvolvimento Social, Central de Vagas, CRAS, CREAS e OSCs conveniadas.
+Plataforma inteligente para triagem, priorizacao e gestao de vagas ILPI da rede socioassistencial de Guarulhos.
 
-## Visao geral
+## Tese do projeto
 
-O projeto centraliza cadastros, vagas, fila de espera, encaminhamentos, auditoria, relatorios e recomendacoes assistidas. A recomendacao inteligente classifica o perfil social, identifica servicos compativeis e apresenta sugestoes explicaveis, mantendo a decisao final sob responsabilidade humana.
+O FacilitaGRU transforma uma triagem subjetiva e manual em um processo estruturado, rastreavel e orientado por dados. O sistema classifica o grau de dependencia, calcula vulnerabilidade social, sugere vaga compativel e gera aviso para avaliacao humana. A decisao final continua com a equipe tecnica.
+
+## Fluxo principal da demo
+
+1. Cidadao ou profissional preenche a triagem ILPI.
+2. O sistema identifica automaticamente bairro, regiao, grau de dependencia e risco social.
+3. A recomendacao cruza perfil do idoso, grau, vulnerabilidade e disponibilidade de vagas.
+4. Quando existe compatibilidade, o caso e pre-encaminhado para evitar lentidao.
+5. A OSC aceita ou recusa com justificativa.
+6. A Central acompanha fila, vagas, alertas, gargalos e historico.
 
 ## Stack
 
 - Frontend: React, React Router, Context API, Axios, TailwindCSS, Recharts
 - Backend: Node.js, Express.js, JWT, bcrypt, multer, express-validator
-- Banco: schema Supabase em `database/schema.sql`; modo local com JSON seed para demonstracao
-- Arquitetura: camadas separadas em controllers, services, routes, middlewares, validators, config e database
+- Banco: Supabase em producao; JSON local para demonstracao
+- Arquitetura: controllers, services, routes, middlewares, validators, config e database
 
 ## Como executar
 
@@ -46,21 +55,34 @@ Todos usam a senha `Admin@123`.
 | Perfil | Email |
 | --- | --- |
 | Administrador | admin@guarulhos.sp.gov.br |
-| Central de Vagas | central@guarulhos.sp.gov.br |
-| CRAS | cras@guarulhos.sp.gov.br |
-| CREAS | creas@guarulhos.sp.gov.br |
+| Gestor central | central@guarulhos.sp.gov.br |
+| Funcionario CRAS | cras@guarulhos.sp.gov.br |
+| Funcionario CREAS | creas@guarulhos.sp.gov.br |
 | OSC | osc@parceira.org.br |
+
+## Funcionalidades fortes para hackathon
+
+- Formulario unico ILPI
+- Classificador automatico de grau 1, 2 e 3
+- Indice de vulnerabilidade social
+- Match automatico com vaga compativel
+- Pre-encaminhamento assistido, sem tirar a decisao humana
+- Aviso regional para avaliacao tecnica
+- Sincronizacao entre status do cidadao e disponibilidade da vaga
+- Dashboard operacional e gerencial
+- Relatorios CSV e PDF
+- Auditoria, logs, historico, upload de documentos e controle por perfil
+- Layout responsivo, acessivel e institucional
 
 ## Supabase
 
-O schema completo esta em `database/schema.sql`. Para producao:
+O schema esta em `database/schema.sql`. Para producao:
 
 1. Crie um projeto no Supabase.
-2. Execute o SQL do arquivo `database/schema.sql`.
-3. Preencha `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` no backend.
-4. Altere `DB_DRIVER=supabase` em `backend/.env`.
-
-O codigo esta organizado para permitir troca do repositório local JSON por Supabase ou MongoDB sem alterar controllers e rotas.
+2. Execute o SQL de `database/schema.sql`.
+3. Execute o SQL de `database/seed.sql` para dados de demonstracao.
+4. Configure `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` no backend.
+5. Configure `DB_DRIVER=supabase`.
 
 ## Deploy
 
@@ -69,28 +91,14 @@ O guia completo esta em `DEPLOY.md`.
 Rota recomendada:
 
 - Banco: Supabase
-- Backend: Render ou Railway
-- Frontend: Vercel ou Netlify
+- Backend: Render
+- Frontend: Vercel
 
 Variaveis principais:
 
 - Backend: `NODE_ENV`, `PORT`, `CLIENT_URLS`, `JWT_SECRET`, `DB_DRIVER`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
 - Frontend: `VITE_API_URL`
 
-## Funcionalidades
+## LGPD e seguranca
 
-- Autenticacao JWT e controle por perfil
-- CRUD de usuarios, OSCs, vagas, cidadaos, solicitacoes e encaminhamentos
-- Upload de documentos de cidadaos
-- Logs de auditoria e historico de alteracoes
-- Filtros, busca e paginacao
-- Dashboard operacional e gerencial
-- Relatorios CSV e PDF
-- Triagem cidadao/profissional
-- Recomendacao inteligente com score e justificativas
-- Alertas automaticos para risco, espera longa e vulnerabilidade critica
-- Layout responsivo, acessivel e institucional
-
-## Observacoes LGPD
-
-O projeto inclui principios de minimizacao, autorizacao por perfil, logs de acesso, mascaramento visual de CPF, protecao de rotas, senha com hash bcrypt e headers de seguranca. Em producao, configure HTTPS, backup, politica de retencao, DPO, termos de consentimento e RLS no Supabase.
+O projeto usa minimizacao de dados, autorizacao por perfil, mascara visual de CPF, logs de auditoria, senha com hash bcrypt, protecao de rotas, validacao de entrada, headers de seguranca e separacao entre area publica e area de gestao. Em producao, configure HTTPS, politicas de retencao, backup, DPO, termos de consentimento e RLS no Supabase.

@@ -88,12 +88,25 @@ const healthOptions = [
 ];
 
 const dependencyPreview = {
+  aguardando: { title: 'Aguardando dados', text: 'Preencha o checklist para calcular', tone: 'neutro' },
   grau_1: { title: 'Grau 1', text: 'Independente', tone: 'baixo' },
   grau_2: { title: 'Grau 2', text: 'Semi-dependente', tone: 'medio' },
   grau_3: { title: 'Grau 3', text: 'Dependente total', tone: 'alto' }
 };
 
 function previewDependency(form) {
+  const hasTechnicalData = [
+    form.grau_mobilidade,
+    form.alimentacao,
+    form.higiene_pessoal,
+    form.cognicao,
+    form.uso_medicamentos
+  ].some(Boolean);
+
+  if (!hasTechnicalData) {
+    return { ...dependencyPreview.aguardando, score: 0 };
+  }
+
   let score = 0;
 
   if (form.grau_mobilidade === 'apoio') score += 1;
@@ -248,7 +261,9 @@ export default function CitizenTriage() {
                 <p className="text-sm font-semibold text-civic-muted">Previa do grau</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className={`rounded-full border px-3 py-1 text-sm font-bold ${
-                    preview.tone === 'alto'
+                    preview.tone === 'neutro'
+                      ? 'border-slate-200 bg-slate-100 text-slate-700'
+                      : preview.tone === 'alto'
                       ? 'border-red-200 bg-red-50 text-red-700'
                       : preview.tone === 'medio'
                         ? 'border-amber-200 bg-amber-50 text-amber-700'
@@ -257,7 +272,9 @@ export default function CitizenTriage() {
                     {preview.title} - {preview.text}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-civic-muted">{preview.text}. Pontos tecnicos: {preview.score}</p>
+                <p className="mt-2 text-sm text-civic-muted">
+                  {preview.tone === 'neutro' ? 'A previa aparece conforme o checklist tecnico e preenchido.' : `${preview.text}. Pontos tecnicos: ${preview.score}`}
+                </p>
               </div>
 
               {!result && (

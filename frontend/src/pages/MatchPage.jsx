@@ -21,8 +21,7 @@ const initialForm = {
   risco_abandono: 'alto',
   situacao_moradia: 'com_familia',
   renda_aproximada: 700,
-  saude: 'fragil',
-  tempo_espera_dias: 20
+  saude: 'fragil'
 };
 
 const options = {
@@ -99,8 +98,7 @@ export default function MatchPage() {
         ...form,
         regiao: getRegionByBairro(form.bairro),
         idade: Number(form.idade),
-        renda_aproximada: Number(form.renda_aproximada),
-        tempo_espera_dias: Number(form.tempo_espera_dias || 0)
+        renda_aproximada: Number(form.renda_aproximada)
       });
       setResult(data);
     } finally {
@@ -135,7 +133,6 @@ export default function MatchPage() {
             <FormInput label="Situacao de moradia" name="situacao_moradia" value={form.situacao_moradia} onChange={handleChange} as="select" options={options.situacao_moradia} required />
             <FormInput label="Renda aproximada" name="renda_aproximada" type="number" value={form.renda_aproximada} onChange={handleChange} required />
             <FormInput label="Condicao de saude" name="saude" value={form.saude} onChange={handleChange} as="select" options={options.saude} required />
-            <FormInput label="Tempo de espera em dias" name="tempo_espera_dias" type="number" value={form.tempo_espera_dias} onChange={handleChange} />
           </div>
 
           <button className="btn-primary" type="submit" disabled={loading}>

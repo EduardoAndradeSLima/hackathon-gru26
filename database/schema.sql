@@ -66,7 +66,6 @@ create table if not exists public.solicitacoes (
   status text not null check (status in ('pendente', 'em_analise', 'encaminhada', 'concluida', 'cancelada')),
   data_solicitacao timestamptz not null default now(),
   data_encaminhamento timestamptz,
-  tempo_espera_dias integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

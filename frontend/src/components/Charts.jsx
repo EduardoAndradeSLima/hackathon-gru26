@@ -24,6 +24,10 @@ export function ChartPanel({ title, children }) {
 }
 
 export function SimpleBarChart({ data, xKey, dataKey }) {
+  if (!data?.length) {
+    return <div className="flex h-full items-center justify-center text-center text-sm font-semibold text-civic-muted">Sem dados suficientes para o grafico.</div>;
+  }
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 10, right: 8, bottom: 16, left: -16 }}>
@@ -38,6 +42,10 @@ export function SimpleBarChart({ data, xKey, dataKey }) {
 }
 
 export function SimplePieChart({ data, nameKey, dataKey }) {
+  if (!data?.length) {
+    return <div className="flex h-full items-center justify-center text-center text-sm font-semibold text-civic-muted">Sem dados suficientes para o grafico.</div>;
+  }
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>

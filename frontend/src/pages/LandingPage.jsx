@@ -3,9 +3,9 @@ import { ArrowRight, Building2, ClipboardCheck, Search, ShieldCheck } from 'luci
 import BrandLogo from '../components/BrandLogo.jsx';
 
 const highlights = [
-  { title: 'Dados centralizados', text: 'Unifica vagas, fila, encaminhamentos e histórico em uma única base confiável.', icon: Building2 },
-  { title: 'Decisão assistida', text: 'Sugere opções compatíveis e explica a recomendação para a equipe técnica.', icon: ClipboardCheck },
-  { title: 'Transparência', text: 'Registra logs, status e auditoria para rastreabilidade institucional.', icon: ShieldCheck }
+  { title: 'Triagem ILPI padronizada', text: 'Checklist unico para idade, mobilidade, alimentacao, higiene, cognicao, cuidador, moradia, renda e saude.', icon: ClipboardCheck },
+  { title: 'Decisao humana assistida', text: 'O sistema sugere grau, prioridade e vaga compativel, mas a assinatura final continua com a equipe tecnica.', icon: ShieldCheck },
+  { title: 'Fila e vagas em tempo real', text: 'Status do cidadao, encaminhamento e disponibilidade da vaga ficam sincronizados para reduzir retrabalho.', icon: Building2 }
 ];
 
 export default function LandingPage() {
@@ -16,13 +16,13 @@ export default function LandingPage() {
           <Link to="/" className="flex items-center gap-3">
             <BrandLogo compact />
           </Link>
-          <nav className="flex items-center gap-2" aria-label="Acesso rápido">
+          <nav className="flex items-center gap-2" aria-label="Acesso rapido">
             <Link className="btn-secondary hidden sm:inline-flex" to="/triagem">
               <Search size={18} aria-hidden="true" />
-              Buscar atendimento
+              Triagem ILPI
             </Link>
             <Link className="btn bg-guarulhos-900 text-white hover:bg-guarulhos-700" to="/login">
-              Área da gestão
+              Area da gestao
               <ArrowRight size={18} aria-hidden="true" />
             </Link>
           </nav>
@@ -34,21 +34,21 @@ export default function LandingPage() {
           <div className="page-shell flex min-h-[620px] items-center py-14">
             <div className="max-w-3xl text-white">
               <p className="mb-4 inline-flex rounded-full bg-white/15 px-3 py-1 text-sm font-semibold ring-1 ring-white/30">
-                Plataforma socioassistencial integrada
+                Plataforma publica para vagas ILPI
               </p>
               <h1 className="max-w-2xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
                 FacilitaGRU
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-white/90">
-                Gestão inteligente para conectar cidadãos, CRAS, CREAS, Central de Vagas e OSCs com mais agilidade, segurança e clareza.
+                Triagem objetiva, prioridade justa e encaminhamento assistido para idosos que precisam de acolhimento institucional.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link className="btn bg-white text-guarulhos-900 hover:bg-guarulhos-50" to="/triagem">
                   <Search size={18} aria-hidden="true" />
-                  Buscar atendimento
+                  Iniciar triagem ILPI
                 </Link>
                 <Link className="btn border border-white/50 bg-white/10 text-white hover:bg-white/20" to="/login">
-                  Gestão institucional
+                  Gestao institucional
                   <ArrowRight size={18} aria-hidden="true" />
                 </Link>
               </div>
@@ -73,18 +73,18 @@ export default function LandingPage() {
         <section className="page-shell py-12">
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div>
-              <p className="text-sm font-bold uppercase text-guarulhos-700">Serviços e orientação</p>
-              <h2 className="mt-2 text-3xl font-bold text-civic-ink">Acesso mais simples para quem precisa e operação mais clara para quem atende.</h2>
+              <p className="text-sm font-bold uppercase text-guarulhos-700">Diferencial do projeto</p>
+              <h2 className="mt-2 text-3xl font-bold text-civic-ink">Uma fila ILPI mais justa, rastreavel e rapida.</h2>
               <p className="mt-4 max-w-3xl leading-8 text-civic-muted">
-                A triagem inicial orienta o cidadão, identifica vulnerabilidades e prepara uma recomendação para análise profissional. A gestão acompanha fila, ocupação, gargalos e encaminhamentos em tempo real.
+                O FacilitaGRU calcula grau de dependencia e indice de vulnerabilidade, identifica vagas compativeis e avisa a equipe regional para avaliacao. Isso reduz dados incompletos, encaminhamentos errados e dependencia de processos manuais.
               </p>
             </div>
             <div className="surface p-5">
-              <h3 className="text-base font-bold">Fluxo integrado</h3>
+              <h3 className="text-base font-bold">Fluxo vencedor</h3>
               <ol className="mt-4 space-y-3 text-sm text-civic-muted">
-                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">1.</strong> Cidadão ou profissional preenche a triagem.</li>
-                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">2.</strong> O sistema sugere serviços, OSCs e vagas compatíveis.</li>
-                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">3.</strong> A equipe humana valida e encaminha com auditoria.</li>
+                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">1.</strong> Triagem ILPI guiada e obrigatoria.</li>
+                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">2.</strong> Classificacao automatica de grau e risco.</li>
+                <li className="rounded-card bg-guarulhos-50 p-3"><strong className="text-civic-ink">3.</strong> Pre-encaminhamento com validacao humana.</li>
               </ol>
             </div>
           </div>

@@ -14,13 +14,25 @@ export default function RelatoriosPage() {
   const [tipo, setTipo] = useState('ocupacao');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setLoading(true);
+    setError('');
     api.get('/relatorios', { params: { tipo } })
       .then(({ data }) => setRows(data.data || []))
+      .catch((err) => setError(err.response?.data?.message || 'Nao foi possivel carregar o relatorio.'))
       .finally(() => setLoading(false));
   }, [tipo]);
+
+  async function baixar(format) {
+    setError('');
+    try {
+      await downloadReport(format, tipo);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Nao foi possivel baixar o arquivo.');
+    }
+  }
 
   const columns = rows[0]
     ? Object.keys(rows[0]).map((key) => ({
@@ -41,16 +53,18 @@ export default function RelatoriosPage() {
           <FormInput label="Tipo de relatório" name="tipo" value={tipo} onChange={(event) => setTipo(event.target.value)} as="select" options={tipos} />
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <button className="btn-secondary" type="button" onClick={() => downloadReport('csv', tipo)}>
+          <button className="btn-secondary" type="button" onClick={() => baixar('csv')}>
             <Download size={18} aria-hidden="true" />
             CSV
           </button>
-          <button className="btn-primary" type="button" onClick={() => downloadReport('pdf', tipo)}>
+          <button className="btn-primary" type="button" onClick={() => baixar('pdf')}>
             <Download size={18} aria-hidden="true" />
             PDF
           </button>
         </div>
       </div>
+
+      {error && <p className="rounded-card bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
 
       <DataTable
         data={rows.map((row, index) => ({ id: `${tipo}-${index}`, ...row }))}

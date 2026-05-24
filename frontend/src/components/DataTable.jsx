@@ -1,9 +1,39 @@
 import Loading from './Loading.jsx';
 
 export default function DataTable({ columns, data, loading, empty = 'Nenhum registro encontrado.', actions }) {
+  const colSpan = columns.length + (actions ? 1 : 0);
+
   return (
     <div className="surface overflow-hidden">
-      <div className="overflow-x-auto">
+      <div className="md:hidden">
+        {loading && (
+          <div className="px-4 py-8">
+            <Loading label="Carregando registros" />
+          </div>
+        )}
+
+        {!loading && data.length === 0 && (
+          <p className="px-4 py-8 text-center text-sm text-civic-muted">{empty}</p>
+        )}
+
+        {!loading && data.map((row) => (
+          <article key={row.id} className="border-b border-civic-line p-4 last:border-b-0">
+            <dl className="space-y-3">
+              {columns.map((column) => (
+                <div key={column.key} className="grid gap-1">
+                  <dt className="text-xs font-bold uppercase text-civic-muted">{column.label}</dt>
+                  <dd className="text-sm font-medium text-civic-ink">
+                    {column.render ? column.render(row) : row[column.key] ?? '-'}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            {actions && <div className="mt-4 flex flex-wrap gap-2">{actions(row)}</div>}
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-civic-line bg-slate-100 text-xs uppercase text-civic-muted">
             <tr>
@@ -18,7 +48,7 @@ export default function DataTable({ columns, data, loading, empty = 'Nenhum regi
           <tbody className="divide-y divide-civic-line bg-white">
             {loading && (
               <tr>
-                <td className="px-4 py-8" colSpan={columns.length + (actions ? 1 : 0)}>
+                <td className="px-4 py-8" colSpan={colSpan}>
                   <Loading label="Carregando registros" />
                 </td>
               </tr>
@@ -26,7 +56,7 @@ export default function DataTable({ columns, data, loading, empty = 'Nenhum regi
 
             {!loading && data.length === 0 && (
               <tr>
-                <td className="px-4 py-8 text-center text-civic-muted" colSpan={columns.length + (actions ? 1 : 0)}>
+                <td className="px-4 py-8 text-center text-civic-muted" colSpan={colSpan}>
                   {empty}
                 </td>
               </tr>

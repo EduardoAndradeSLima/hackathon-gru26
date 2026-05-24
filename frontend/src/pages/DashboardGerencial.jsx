@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Building2, ClipboardCheck, Timer, Users } from 'lucide-react';
+import { Building2, ClipboardCheck, Home, Users } from 'lucide-react';
+import AlertCard from '../components/AlertCard.jsx';
 import DashboardCard from '../components/DashboardCard.jsx';
 import Loading from '../components/Loading.jsx';
 import { ChartPanel, SimpleBarChart, SimplePieChart } from '../components/Charts.jsx';
@@ -8,14 +9,25 @@ import { api } from '../services/api.js';
 export default function DashboardGerencial() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     let active = true;
     async function load() {
-      const { data } = await api.get('/dashboard');
-      if (active) {
-        setDashboard(data);
-        setLoading(false);
+      try {
+        const { data } = await api.get('/dashboard');
+        if (active) {
+          setDashboard(data);
+          setError('');
+        }
+      } catch (err) {
+        if (active) {
+          setError(err.response?.data?.message || 'Nao foi possivel carregar os indicadores.');
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -31,6 +43,10 @@ export default function DashboardGerencial() {
     return <Loading label="Carregando indicadores" />;
   }
 
+  if (error || !dashboard) {
+    return <AlertCard title="Indicadores indisponiveis" message={error || 'Nao foi possivel carregar o dashboard gerencial.'} tone="alto" />;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -42,7 +58,7 @@ export default function DashboardGerencial() {
         <DashboardCard title="Cidadãos acompanhados" value={dashboard.cards.cidadaos_acompanhados} icon={Users} />
         <DashboardCard title="OSCs ativas" value={dashboard.cards.oscs_ativas} icon={Building2} tone="green" />
         <DashboardCard title="Triagens ILPI" value={dashboard.cards.triagens_ilpi || 0} icon={ClipboardCheck} tone="yellow" />
-        <DashboardCard title="Tempo médio" value={`${dashboard.cards.tempo_medio_espera} dias`} icon={Timer} tone="red" />
+        <DashboardCard title="Vagas ILPI disponíveis" value={dashboard.cards.vagas_disponiveis} icon={Home} tone="green" />
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
