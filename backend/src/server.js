@@ -6,7 +6,7 @@ async function bootstrap() {
   await store.ensure();
 
   app.listen(env.port, () => {
-    console.log(`Guarulhos Social Vagas API rodando em http://localhost:${env.port}`);
+    console.log(`FacilitaGRU API rodando em http://localhost:${env.port}`);
   });
 }
 

@@ -22,10 +22,40 @@ const responder = asyncHandler(async (req, res) => {
 
   if (status === 'aceito') {
     await crudService.update('vagas', encaminhamento.vaga_id, { status: 'ocupada' });
+    const solicitacao = await crudService.update('solicitacoes', encaminhamento.solicitacao_id, { status: 'concluida' });
+    const cidadao = await crudService.get('cidadaos', solicitacao.cidadao_id);
+    await crudService.update('cidadaos', cidadao.id, {
+      status_atendimento: 'em_acolhimento',
+      historico: [
+        ...(cidadao.historico || []),
+        `Encaminhamento aceito pela OSC em ${new Date().toLocaleString('pt-BR')}.`
+      ]
+    });
   }
 
   if (status === 'recusado') {
     await crudService.update('vagas', encaminhamento.vaga_id, { status: 'disponivel' });
+    const solicitacao = await crudService.update('solicitacoes', encaminhamento.solicitacao_id, { status: 'em_analise' });
+    const cidadao = await crudService.get('cidadaos', solicitacao.cidadao_id);
+    await crudService.update('cidadaos', cidadao.id, {
+      status_atendimento: 'aguardando_vaga',
+      historico: [
+        ...(cidadao.historico || []),
+        `Encaminhamento recusado pela OSC em ${new Date().toLocaleString('pt-BR')}.`
+      ]
+    });
+  }
+
+  if (status === 'concluido') {
+    const solicitacao = await crudService.update('solicitacoes', encaminhamento.solicitacao_id, { status: 'concluida' });
+    const cidadao = await crudService.get('cidadaos', solicitacao.cidadao_id);
+    await crudService.update('cidadaos', cidadao.id, {
+      status_atendimento: 'atendido',
+      historico: [
+        ...(cidadao.historico || []),
+        `Atendimento concluido em ${new Date().toLocaleString('pt-BR')}.`
+      ]
+    });
   }
 
   await logAction(req, 'RESPONDER_ENCAMINHAMENTO', 'encaminhamentos', encaminhamento.id, {

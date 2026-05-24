@@ -14,7 +14,7 @@
       "nome": "Equipe Central de Vagas",
       "email": "central@guarulhos.sp.gov.br",
       "senha_temporaria": "Admin@123",
-      "perfil": "CENTRAL_VAGAS",
+      "perfil": "GESTOR_CENTRAL",
       "unidade": "Central de Vagas",
       "created_at": "2026-01-05T12:00:00.000Z"
     },
@@ -23,7 +23,7 @@
       "nome": "CRAS Pimentas",
       "email": "cras@guarulhos.sp.gov.br",
       "senha_temporaria": "Admin@123",
-      "perfil": "CRAS",
+      "perfil": "FUNCIONARIO_CRAS",
       "unidade": "CRAS Pimentas",
       "created_at": "2026-01-05T12:00:00.000Z"
     },
@@ -32,7 +32,7 @@
       "nome": "CREAS Centro",
       "email": "creas@guarulhos.sp.gov.br",
       "senha_temporaria": "Admin@123",
-      "perfil": "CREAS",
+      "perfil": "FUNCIONARIO_CREAS",
       "unidade": "CREAS Centro",
       "created_at": "2026-01-05T12:00:00.000Z"
     },
@@ -162,6 +162,7 @@
       "perfil_social": "Pessoa idosa com renda baixa e dependencia moderada.",
       "vulnerabilidade": ["pessoa_idosa", "deficiencia"],
       "grau_risco": "medio",
+      "status_atendimento": "aguardando_vaga",
       "unidade_referencia": "CREAS Centro",
       "historico": ["Atendimento inicial registrado em 2026-05-08."],
       "anexos": [],
@@ -180,6 +181,7 @@
       "perfil_social": "Mulher em situacao de risco por violencia domestica.",
       "vulnerabilidade": ["violencia_domestica", "risco_social"],
       "grau_risco": "alto",
+      "status_atendimento": "encaminhado",
       "unidade_referencia": "CREAS Centro",
       "historico": ["Encaminhamento de urgencia em avaliacao."],
       "anexos": [],

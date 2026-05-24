@@ -38,6 +38,24 @@ export const statusSolicitacao = [
   { value: 'cancelada', label: 'Cancelada' }
 ];
 
+export const statusAtendimentoCidadao = [
+  { value: 'aguardando_triagem', label: 'Aguardando triagem' },
+  { value: 'em_triagem', label: 'Em triagem' },
+  { value: 'aguardando_vaga', label: 'Aguardando vaga' },
+  { value: 'encaminhado', label: 'Encaminhado' },
+  { value: 'em_acolhimento', label: 'Em acolhimento' },
+  { value: 'atendido', label: 'Atendido' },
+  { value: 'cancelado', label: 'Cancelado' }
+];
+
+export const perfisUsuario = [
+  { value: 'ADMINISTRADOR', label: 'Administrador' },
+  { value: 'GESTOR_CENTRAL', label: 'Gestor central' },
+  { value: 'FUNCIONARIO_CRAS', label: 'Funcionario do CRAS' },
+  { value: 'FUNCIONARIO_CREAS', label: 'Funcionario do CREAS' },
+  { value: 'OSC', label: 'OSC' }
+];
+
 export const grausDependencia = [
   { value: 'nao_aplicavel', label: 'Nao aplicavel' },
   { value: 'baixo', label: 'Baixo' },

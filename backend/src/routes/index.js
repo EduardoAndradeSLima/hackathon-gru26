@@ -9,7 +9,7 @@ const reportRoutes = require('./reportRoutes');
 router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    name: 'Guarulhos Social Vagas API',
+    name: 'FacilitaGRU API',
     timestamp: new Date().toISOString()
   });
 });

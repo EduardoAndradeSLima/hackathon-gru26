@@ -5,11 +5,12 @@ import {
   ClipboardList,
   FileText,
   GitMerge,
-  Home,
   LayoutDashboard,
+  ShieldCheck,
   Users,
   X
 } from 'lucide-react';
+import BrandLogo from './BrandLogo.jsx';
 
 const links = [
   { to: '/app', label: 'Painel', icon: LayoutDashboard, end: true },
@@ -19,7 +20,8 @@ const links = [
   { to: '/app/match', label: 'Match', icon: GitMerge },
   { to: '/app/gerencial', label: 'Gerencial', icon: BarChart3 },
   { to: '/app/oscs', label: 'OSCs', icon: Building2 },
-  { to: '/app/relatorios', label: 'Relatórios', icon: FileText }
+  { to: '/app/relatorios', label: 'Relatórios', icon: FileText },
+  { to: '/app/usuarios', label: 'Usuários', icon: ShieldCheck }
 ];
 
 export default function Sidebar({ open, onClose }) {
@@ -28,13 +30,7 @@ export default function Sidebar({ open, onClose }) {
       <div className="flex h-full flex-col">
         <div className="flex min-h-16 items-center justify-between border-b border-civic-line px-5">
           <NavLink to="/app" className="flex items-center gap-3" onClick={onClose}>
-            <span className="grid size-10 place-items-center rounded-card bg-guarulhos-700 text-white">
-              <Home size={20} aria-hidden="true" />
-            </span>
-            <span>
-              <span className="block text-sm font-bold text-civic-ink">Guarulhos</span>
-              <span className="block text-xs font-semibold text-guarulhos-700">Social Vagas</span>
-            </span>
+            <BrandLogo compact />
           </NavLink>
           <button type="button" className="btn-secondary px-3 lg:hidden" onClick={onClose} aria-label="Fechar menu">
             <X size={18} />

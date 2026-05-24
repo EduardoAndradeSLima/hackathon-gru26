@@ -5,7 +5,7 @@ create table if not exists public.users (
   nome text not null,
   email text not null unique,
   senha_hash text not null,
-  perfil text not null check (perfil in ('ADMINISTRADOR', 'CENTRAL_VAGAS', 'CRAS', 'CREAS', 'OSC', 'CIDADAO')),
+  perfil text not null check (perfil in ('ADMINISTRADOR', 'GESTOR_CENTRAL', 'FUNCIONARIO_CRAS', 'FUNCIONARIO_CREAS', 'CENTRAL_VAGAS', 'CRAS', 'CREAS', 'OSC', 'CIDADAO')),
   unidade text not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -50,6 +50,7 @@ create table if not exists public.cidadaos (
   perfil_social text,
   vulnerabilidade jsonb not null default '[]'::jsonb,
   grau_risco text check (grau_risco in ('baixo', 'medio', 'alto', 'critico')),
+  status_atendimento text not null default 'aguardando_triagem' check (status_atendimento in ('aguardando_triagem', 'em_triagem', 'aguardando_vaga', 'encaminhado', 'em_acolhimento', 'atendido', 'cancelado')),
   unidade_referencia text,
   historico jsonb not null default '[]'::jsonb,
   anexos jsonb not null default '[]'::jsonb,
@@ -113,10 +114,13 @@ create table if not exists public.logs (
   data timestamptz not null default now()
 );
 
+alter table public.cidadaos add column if not exists status_atendimento text not null default 'aguardando_triagem';
+
 create index if not exists idx_users_perfil on public.users(perfil);
 create index if not exists idx_vagas_status on public.vagas(status);
 create index if not exists idx_vagas_tipo_servico on public.vagas(tipo_servico);
 create index if not exists idx_cidadaos_regiao on public.cidadaos(regiao);
+create index if not exists idx_cidadaos_status_atendimento on public.cidadaos(status_atendimento);
 create index if not exists idx_solicitacoes_status on public.solicitacoes(status);
 create index if not exists idx_solicitacoes_prioridade on public.solicitacoes(prioridade);
 create index if not exists idx_logs_entidade on public.logs(entidade, entidade_id);
@@ -166,3 +170,10 @@ create policy "service_role_full_encaminhamentos" on public.encaminhamentos for 
 create policy "service_role_full_triagens" on public.triagens for all using (auth.role() = 'service_role') with check (auth.role() = 'service_role');
 create policy "service_role_full_notificacoes" on public.notificacoes for all using (auth.role() = 'service_role') with check (auth.role() = 'service_role');
 create policy "service_role_full_logs" on public.logs for all using (auth.role() = 'service_role') with check (auth.role() = 'service_role');
+
+alter table public.users drop constraint if exists users_perfil_check;
+alter table public.users add constraint users_perfil_check check (perfil in ('ADMINISTRADOR', 'GESTOR_CENTRAL', 'FUNCIONARIO_CRAS', 'FUNCIONARIO_CREAS', 'CENTRAL_VAGAS', 'CRAS', 'CREAS', 'OSC', 'CIDADAO'));
+
+alter table public.cidadaos add column if not exists status_atendimento text not null default 'aguardando_triagem';
+alter table public.cidadaos drop constraint if exists cidadaos_status_atendimento_check;
+alter table public.cidadaos add constraint cidadaos_status_atendimento_check check (status_atendimento in ('aguardando_triagem', 'em_triagem', 'aguardando_vaga', 'encaminhado', 'em_acolhimento', 'atendido', 'cancelado'));

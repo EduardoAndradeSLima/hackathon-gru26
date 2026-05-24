@@ -1,5 +1,6 @@
 import { Bell, LogOut, Menu, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import BrandLogo from './BrandLogo.jsx';
 
 export default function Navbar({ onMenu }) {
   const { user, logout } = useAuth();
@@ -11,8 +12,11 @@ export default function Navbar({ onMenu }) {
           <button type="button" className="btn-secondary px-3 lg:hidden" onClick={onMenu} aria-label="Abrir menu">
             <Menu size={18} />
           </button>
+          <div className="hidden xl:block">
+            <BrandLogo compact />
+          </div>
           <div>
-            <p className="text-xs font-semibold uppercase text-guarulhos-700">Prefeitura de Guarulhos</p>
+            <p className="text-xs font-semibold uppercase text-guarulhos-700">FacilitaGRU</p>
             <h1 className="text-base font-bold text-civic-ink sm:text-lg">Gestão socioassistencial</h1>
           </div>
         </div>

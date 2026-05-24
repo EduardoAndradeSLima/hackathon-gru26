@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Building2, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../services/api.js';
+import BrandLogo from '../components/BrandLogo.jsx';
 
 export default function Login() {
   const { login, loading } = useAuth();
@@ -43,29 +44,25 @@ export default function Login() {
     <div className="grid min-h-screen bg-slate-50 lg:grid-cols-[0.95fr_1.05fr]">
       <section className="hidden bg-guarulhos-900 p-10 text-white lg:flex lg:flex-col lg:justify-between">
         <Link to="/" className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-card bg-white text-guarulhos-900">
-            <Building2 size={22} aria-hidden="true" />
-          </span>
-          <span className="font-bold">Guarulhos Social Vagas</span>
+          <BrandLogo light />
         </Link>
         <div>
-          <p className="text-sm font-bold uppercase text-blue-200">Acesso protegido</p>
+          <p className="text-sm font-bold uppercase text-guarulhos-100">Acesso protegido</p>
           <h1 className="mt-3 max-w-xl text-4xl font-bold leading-tight">
-            Gestão integrada para Central de Vagas, CRAS, CREAS e OSCs.
+            FacilitaGRU integra Central de Vagas, CRAS, CREAS e OSCs.
           </h1>
-          <p className="mt-5 max-w-xl leading-8 text-blue-100">
+          <p className="mt-5 max-w-xl leading-8 text-guarulhos-100">
             Use seu perfil institucional para consultar dashboards, fila, vagas, encaminhamentos e relatórios.
           </p>
         </div>
-        <p className="text-sm text-blue-200">Ambiente com JWT, senha criptografada e trilha de auditoria.</p>
+        <p className="text-sm text-guarulhos-100">Ambiente com JWT, senha criptografada e trilha de auditoria.</p>
       </section>
 
       <main className="flex items-center justify-center p-4">
         <form onSubmit={handleSubmit} className="surface w-full max-w-md p-6">
           <div className="mb-6">
             <Link to="/" className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-guarulhos-700 lg:hidden">
-              <Building2 size={18} />
-              Guarulhos Social Vagas
+              <BrandLogo compact />
             </Link>
             <h1 className="text-2xl font-bold text-civic-ink">Área da gestão</h1>
             <p className="mt-2 text-sm leading-6 text-civic-muted">Entre com suas credenciais institucionais.</p>

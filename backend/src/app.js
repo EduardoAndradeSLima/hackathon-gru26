@@ -30,7 +30,7 @@ app.use('/uploads', express.static(path.join(__dirname, '..', env.uploadDir)));
 
 app.get('/', (_req, res) => {
   res.json({
-    name: 'Guarulhos Social Vagas API',
+    name: 'FacilitaGRU API',
     status: 'online',
     health: '/api/health',
     docs: 'Use as rotas iniciadas por /api.'

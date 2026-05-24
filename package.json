@@ -1,8 +1,8 @@
 {
-  "name": "guarulhos-social-vagas",
+  "name": "facilitagru",
   "version": "1.0.0",
   "private": true,
-  "description": "Plataforma inteligente de gestao de vagas socioassistenciais da Prefeitura de Guarulhos.",
+  "description": "FacilitaGRU: plataforma inteligente de gestao de vagas socioassistenciais da Prefeitura de Guarulhos.",
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "install:all": "npm install --prefix backend && npm install --prefix frontend",

@@ -5,6 +5,7 @@ const validate = require('../middlewares/validate');
 const createCrudController = require('../controllers/crudController');
 const cidadaoController = require('../controllers/cidadaoController');
 const encaminhamentoController = require('../controllers/encaminhamentoController');
+const solicitacaoController = require('../controllers/solicitacaoController');
 const upload = require('../middlewares/upload');
 const {
   idParam,
@@ -15,12 +16,14 @@ const {
   solicitacaoValidator,
   encaminhamentoValidator
 } = require('../validators/commonValidators');
-const { PROFILES } = require('../models/profiles');
+const { PROFILES, CENTRAL_PROFILES, CRAS_PROFILES, CREAS_PROFILES } = require('../models/profiles');
 
 function resource(collection, validator, profiles = []) {
   const instance = router();
   const controller = collection === 'cidadaos'
     ? cidadaoController
+    : collection === 'solicitacoes'
+      ? solicitacaoController
     : collection === 'encaminhamentos'
       ? encaminhamentoController
       : createCrudController(collection);
@@ -36,13 +39,14 @@ function resource(collection, validator, profiles = []) {
 }
 
 const users = resource('users', userValidator, [PROFILES.ADMINISTRADOR]);
-const oscs = resource('oscs', oscValidator, [PROFILES.ADMINISTRADOR, PROFILES.CENTRAL_VAGAS]);
-const vagas = resource('vagas', vagaValidator, [PROFILES.ADMINISTRADOR, PROFILES.CENTRAL_VAGAS, PROFILES.OSC]);
-const cidadaos = resource('cidadaos', cidadaoValidator, [PROFILES.ADMINISTRADOR, PROFILES.CRAS, PROFILES.CREAS, PROFILES.CENTRAL_VAGAS]);
-const solicitacoes = resource('solicitacoes', solicitacaoValidator, [PROFILES.ADMINISTRADOR, PROFILES.CRAS, PROFILES.CREAS, PROFILES.CENTRAL_VAGAS]);
-const encaminhamentos = resource('encaminhamentos', encaminhamentoValidator, [PROFILES.ADMINISTRADOR, PROFILES.CENTRAL_VAGAS]);
+const oscs = resource('oscs', oscValidator, CENTRAL_PROFILES);
+const vagas = resource('vagas', vagaValidator, [...CENTRAL_PROFILES, PROFILES.OSC]);
+const cidadaos = resource('cidadaos', cidadaoValidator, [...CRAS_PROFILES, ...CREAS_PROFILES]);
+const solicitacoes = resource('solicitacoes', solicitacaoValidator, [...CRAS_PROFILES, ...CREAS_PROFILES]);
+const encaminhamentos = resource('encaminhamentos', encaminhamentoValidator, CENTRAL_PROFILES);
 
-cidadaos.post('/:id/documentos', auth, authorize(PROFILES.ADMINISTRADOR, PROFILES.CRAS, PROFILES.CREAS, PROFILES.CENTRAL_VAGAS), upload.single('documento'), cidadaoController.uploadDocument);
-encaminhamentos.patch('/:id/responder', auth, authorize(PROFILES.ADMINISTRADOR, PROFILES.CENTRAL_VAGAS, PROFILES.OSC), encaminhamentoController.responder);
+cidadaos.post('/:id/documentos', auth, authorize(...CRAS_PROFILES, ...CREAS_PROFILES), upload.single('documento'), cidadaoController.uploadDocument);
+solicitacoes.patch('/:id/encaminhar', auth, authorize(...CENTRAL_PROFILES), solicitacaoController.encaminhar);
+encaminhamentos.patch('/:id/responder', auth, authorize(...CENTRAL_PROFILES, PROFILES.OSC), encaminhamentoController.responder);
 
 module.exports = { users, oscs, vagas, cidadaos, solicitacoes, encaminhamentos };

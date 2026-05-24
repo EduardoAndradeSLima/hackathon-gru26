@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: guarulhos-social-vagas-api
+    name: facilitagru-api
     env: node
     rootDir: backend
     buildCommand: npm install

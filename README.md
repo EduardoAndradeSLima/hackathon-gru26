@@ -1,4 +1,4 @@
-# Guarulhos Social Vagas
+# FacilitaGRU
 
 Sistema web para gestao inteligente de vagas socioassistenciais, integrando Secretaria de Desenvolvimento Social, Central de Vagas, CRAS, CREAS e OSCs conveniadas.
 

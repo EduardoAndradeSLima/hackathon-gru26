@@ -7,7 +7,17 @@ const idParam = [
 const userValidator = [
   body('nome').notEmpty().withMessage('Nome obrigatorio.'),
   body('email').isEmail().withMessage('Email invalido.'),
-  body('perfil').isIn(['ADMINISTRADOR', 'CENTRAL_VAGAS', 'CRAS', 'CREAS', 'OSC', 'CIDADAO']).withMessage('Perfil invalido.'),
+  body('perfil').isIn([
+    'ADMINISTRADOR',
+    'GESTOR_CENTRAL',
+    'FUNCIONARIO_CRAS',
+    'FUNCIONARIO_CREAS',
+    'CENTRAL_VAGAS',
+    'CRAS',
+    'CREAS',
+    'OSC',
+    'CIDADAO'
+  ]).withMessage('Perfil invalido.'),
   body('unidade').notEmpty().withMessage('Unidade obrigatoria.')
 ];
 
@@ -28,7 +38,11 @@ const vagaValidator = [
 const cidadaoValidator = [
   body('nome').notEmpty().withMessage('Nome obrigatorio.'),
   body('cpf').notEmpty().withMessage('CPF obrigatorio.'),
-  body('telefone').optional({ checkFalsy: true }).isLength({ min: 8 }).withMessage('Telefone invalido.')
+  body('telefone').optional({ checkFalsy: true }).isLength({ min: 8 }).withMessage('Telefone invalido.'),
+  body('status_atendimento')
+    .optional({ checkFalsy: true })
+    .isIn(['aguardando_triagem', 'em_triagem', 'aguardando_vaga', 'encaminhado', 'em_acolhimento', 'atendido', 'cancelado'])
+    .withMessage('Status do cidadao invalido.')
 ];
 
 const solicitacaoValidator = [

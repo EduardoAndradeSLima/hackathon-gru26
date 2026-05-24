@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Building2, ClipboardCheck, Search, ShieldCheck } from 'lucide-react';
+import BrandLogo from '../components/BrandLogo.jsx';
 
 const highlights = [
-  { title: 'Dados centralizados', text: 'Unifica vagas, fila, encaminhamentos e historico em uma unica base confiavel.', icon: Building2 },
-  { title: 'Decisao assistida', text: 'Sugere opcoes compativeis e explica a recomendacao para a equipe tecnica.', icon: ClipboardCheck },
-  { title: 'Transparencia', text: 'Registra logs, status e auditoria para rastreabilidade institucional.', icon: ShieldCheck }
+  { title: 'Dados centralizados', text: 'Unifica vagas, fila, encaminhamentos e histórico em uma única base confiável.', icon: Building2 },
+  { title: 'Decisão assistida', text: 'Sugere opções compatíveis e explica a recomendação para a equipe técnica.', icon: ClipboardCheck },
+  { title: 'Transparência', text: 'Registra logs, status e auditoria para rastreabilidade institucional.', icon: ShieldCheck }
 ];
 
 export default function LandingPage() {
@@ -13,15 +14,9 @@ export default function LandingPage() {
       <header className="border-b border-civic-line bg-white">
         <div className="page-shell flex min-h-16 items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-card bg-guarulhos-700 text-white">
-              <Building2 size={20} aria-hidden="true" />
-            </span>
-            <span>
-              <span className="block text-sm font-bold">Guarulhos Social Vagas</span>
-              <span className="block text-xs font-semibold text-guarulhos-700">Prefeitura de Guarulhos</span>
-            </span>
+            <BrandLogo compact />
           </Link>
-          <nav className="flex items-center gap-2" aria-label="Acesso rapido">
+          <nav className="flex items-center gap-2" aria-label="Acesso rápido">
             <Link className="btn-secondary hidden sm:inline-flex" to="/triagem">
               <Search size={18} aria-hidden="true" />
               Buscar atendimento
@@ -42,13 +37,13 @@ export default function LandingPage() {
                 Plataforma socioassistencial integrada
               </p>
               <h1 className="max-w-2xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Guarulhos Social Vagas
+                FacilitaGRU
               </h1>
-              <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-50">
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-white/90">
                 Gestão inteligente para conectar cidadãos, CRAS, CREAS, Central de Vagas e OSCs com mais agilidade, segurança e clareza.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link className="btn bg-white text-guarulhos-900 hover:bg-blue-50" to="/triagem">
+                <Link className="btn bg-white text-guarulhos-900 hover:bg-guarulhos-50" to="/triagem">
                   <Search size={18} aria-hidden="true" />
                   Buscar atendimento
                 </Link>

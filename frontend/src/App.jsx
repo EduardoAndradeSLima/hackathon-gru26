@@ -12,6 +12,7 @@ import MatchPage from './pages/MatchPage.jsx';
 import DashboardGerencial from './pages/DashboardGerencial.jsx';
 import OscArea from './pages/OscArea.jsx';
 import RelatoriosPage from './pages/RelatoriosPage.jsx';
+import UsuariosPage from './pages/UsuariosPage.jsx';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="gerencial" element={<DashboardGerencial />} />
         <Route path="oscs" element={<OscArea />} />
         <Route path="relatorios" element={<RelatoriosPage />} />
+        <Route path="usuarios" element={<UsuariosPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

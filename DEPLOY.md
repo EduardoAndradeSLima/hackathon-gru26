@@ -1,4 +1,4 @@
-# Deploy do Guarulhos Social Vagas
+# Deploy do FacilitaGRU
 
 Este roteiro publica o sistema em producao usando Supabase, Render e Vercel. Railway e Netlify tambem funcionam com as mesmas variaveis.
 
@@ -72,7 +72,7 @@ CLIENT_URLS=https://seu-frontend.vercel.app
 Se usar uma URL preview e uma URL final, separe por virgula:
 
 ```env
-CLIENT_URLS=https://seu-frontend.vercel.app,https://guarulhos-social-vagas.vercel.app
+CLIENT_URLS=https://seu-frontend.vercel.app,https://facilitagru.vercel.app
 ```
 
 ## 4. Deploy alternativo via Docker
@@ -82,13 +82,13 @@ O backend possui `backend/Dockerfile`.
 Build:
 
 ```bash
-docker build -t guarulhos-social-vagas-api ./backend
+docker build -t facilitagru-api ./backend
 ```
 
 Run:
 
 ```bash
-docker run -p 3333:3333 --env-file backend/.env guarulhos-social-vagas-api
+docker run -p 3333:3333 --env-file backend/.env facilitagru-api
 ```
 
 ## 5. Checklist de producao

@@ -67,7 +67,7 @@ async function pdf(type) {
     doc.on('data', (chunk) => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
 
-    doc.fontSize(18).text('Guarulhos Social Vagas', { align: 'left' });
+    doc.fontSize(18).text('FacilitaGRU', { align: 'left' });
     doc.moveDown(0.4);
     doc.fontSize(12).text(`Relatorio: ${type}`);
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`);
