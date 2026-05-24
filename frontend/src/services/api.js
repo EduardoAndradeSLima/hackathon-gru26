@@ -1,7 +1,14 @@
 import axios from 'axios';
 
+function getApiBaseUrl() {
+  const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api';
+  const cleanUrl = rawUrl.replace(/\/+$/, '');
+
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+}
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3333/api',
+  baseURL: getApiBaseUrl(),
   timeout: 15000
 });
 
